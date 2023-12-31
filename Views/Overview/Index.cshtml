@@ -1,0 +1,57 @@
+﻿@model List<MusicApp_AdamKoen.ViewModels.SongViewModel>
+<style>
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table th {
+            text-align: left;
+            background-color: #f2f2f2;
+        }
+
+        .table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .table tr:hover {
+            background-color: #ddd;
+        }
+</style>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Artist</th>
+            <th>Genre</th>
+            <th>Release Date</th>
+            <th>Duration (seconds)</th>
+            <th>Playlists</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var song in Model)
+        {
+            <tr>
+                <td>@song.Title</td>
+                <td>@song.ArtistName</td>
+                <td>@song.Genre</td>
+                <td>@song.ReleaseDate.ToShortDateString()</td>
+                <td>@song.Duration</td>
+                <td>
+                    <ul>
+                        @foreach (var playlist in song.Playlists)
+                        {
+                            <li>@playlist</li>
+                        }
+                    </ul>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

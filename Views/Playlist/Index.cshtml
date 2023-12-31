@@ -1,0 +1,34 @@
+﻿@model List<MusicApp_AdamKoen.ViewModels.PlaylistViewModel>
+
+<h2>Playlists</h2>
+<a href="@Url.Action("Create", "Playlist")" class="btn btn-primary">Create New Playlist</a>
+
+@foreach (var playlist in Model)
+{
+    <div>
+        <h3>@playlist.Name</h3>
+        <p>Created At: @playlist.CreatedAt.ToShortDateString()</p>
+        <p>Public: @(playlist.IsPublic ? "Yes" : "No")</p>
+
+        <h4>Songs</h4>
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Artist</th>
+                <th>Genre</th>
+                <th>Release Date</th>
+                <th>Duration</th>
+            </tr>
+            @foreach (var song in playlist.Songs)
+            {
+                <tr>
+                    <td>@song.Title</td>
+                    <td>@song.ArtistName</td>
+                    <td>@song.Genre</td>
+                    <td>@song.ReleaseDate.ToShortDateString()</td>
+                    <td>@song.Duration</td>
+                </tr>
+            }
+        </table>
+    </div>
+}

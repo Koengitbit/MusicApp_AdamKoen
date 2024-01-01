@@ -53,10 +53,18 @@ public class SpotifyDbContext : DbContext
             .HasForeignKey(albumSong => albumSong.SongId);
 
         modelBuilder.Entity<User>()
-        .HasMany(u => u.Playlists)
-        .WithOne(p => p.User)
-        .HasForeignKey(p => p.UserId);
+            .HasMany(u => u.Playlists);
 
+        modelBuilder.Entity<User>().HasData(
+             new User
+             {
+                 Id = 1,
+                 Name = "Test User",
+                 Email = "testuser@example.com",
+                 Password = "hashedpassword", // Ensure this is properly hashed in a real scenario
+                 BirthDate = new DateTime(1990, 1, 1)
+             }
+         );
 
         modelBuilder.Entity<Artist>().HasData(
             new Artist { Id = 1, Name = "Artist One" },
@@ -72,10 +80,9 @@ public class SpotifyDbContext : DbContext
             new Song { Id = 1, Title = "Song One", Genre = "Pop", ReleaseDate = new DateTime(2020, 5, 1), Duration = 210, ArtistId = 1 },
             new Song { Id = 2, Title = "Song Two", Genre = "Rock", ReleaseDate = new DateTime(2021, 6, 1), Duration = 180, ArtistId = 2 }
         );
-
         modelBuilder.Entity<Playlist>().HasData(
-            new Playlist { Id = 1, Name = "Playlist One", IsPublic = true, CreatedAt = new DateTime(2022, 1, 1) },
-            new Playlist { Id = 2, Name = "Playlist Two", IsPublic = false, CreatedAt = new DateTime(2022, 2, 1) }
+            new Playlist { Id = 1, Name = "Playlist One", IsPublic = true, CreatedAt = new DateTime(2022, 1, 1), UserId = 1 },
+            new Playlist { Id = 2, Name = "Playlist Two", IsPublic = false, CreatedAt = new DateTime(2022, 2, 1), UserId = 1 }
         );
 
         // For Many-to-Many relationship, you would need to add entries in the join table

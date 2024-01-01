@@ -12,8 +12,8 @@ using MusicApp_AdamKoen.DAL;
 namespace MusicAppAdamKoen.Migrations
 {
     [DbContext(typeof(SpotifyDbContext))]
-    [Migration("20231231143809_UserMigration")]
-    partial class UserMigration
+    [Migration("20240101190236_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -127,7 +127,12 @@ namespace MusicAppAdamKoen.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Playlists");
 
@@ -137,14 +142,16 @@ namespace MusicAppAdamKoen.Migrations
                             Id = 1,
                             CreatedAt = new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsPublic = true,
-                            Name = "Playlist One"
+                            Name = "Playlist One",
+                            UserId = 1
                         },
                         new
                         {
                             Id = 2,
                             CreatedAt = new DateTime(2022, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsPublic = false,
-                            Name = "Playlist Two"
+                            Name = "Playlist Two",
+                            UserId = 1
                         });
                 });
 
@@ -227,6 +234,44 @@ namespace MusicAppAdamKoen.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MusicApp_AdamKoen.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BirthDate = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "testuser@example.com",
+                            Name = "Test User",
+                            Password = "hashedpassword"
+                        });
+                });
+
             modelBuilder.Entity("MusicApp_AdamKoen.Models.AlbumSong", b =>
                 {
                     b.HasOne("MusicApp_AdamKoen.Models.Album", "Album")
@@ -244,6 +289,17 @@ namespace MusicAppAdamKoen.Migrations
                     b.Navigation("Album");
 
                     b.Navigation("Song");
+                });
+
+            modelBuilder.Entity("MusicApp_AdamKoen.Models.Playlist", b =>
+                {
+                    b.HasOne("MusicApp_AdamKoen.Models.User", "User")
+                        .WithMany("Playlists")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MusicApp_AdamKoen.Models.PlaylistSong", b =>
@@ -295,6 +351,11 @@ namespace MusicAppAdamKoen.Migrations
                 {
                     b.Navigation("Albums");
 
+                    b.Navigation("Playlists");
+                });
+
+            modelBuilder.Entity("MusicApp_AdamKoen.Models.User", b =>
+                {
                     b.Navigation("Playlists");
                 });
 #pragma warning restore 612, 618

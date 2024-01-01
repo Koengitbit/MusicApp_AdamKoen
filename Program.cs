@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using MusicApp_AdamKoen.DAL;
+using MusicApp_AdamKoen.Models;
 
 namespace MusicApp_AdamKoen
 {
@@ -11,6 +14,23 @@ namespace MusicApp_AdamKoen
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<SpotifyDbContext>();
+            builder.Services.AddScoped<PasswordHasher<User>>();
+            //cookie auth
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Account/Login";
+                    options.LogoutPath = "/Account/Logout";
+                    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+                });
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromDays(30); // 30 day cookie
+                options.LoginPath = "/Account/Login";
+                options.LogoutPath = "/Account/Logout";
+                options.SlidingExpiration = true; // refresh timeout when browsing
+            });
 
             var app = builder.Build();
 
@@ -26,7 +46,7 @@ namespace MusicApp_AdamKoen
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

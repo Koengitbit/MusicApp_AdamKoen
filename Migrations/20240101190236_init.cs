@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MusicAppAdamKoen.Migrations
 {
     /// <inheritdoc />
-    public partial class MoreProps : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -42,18 +42,19 @@ namespace MusicAppAdamKoen.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Playlists",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsPublic = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Playlists", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -75,6 +76,52 @@ namespace MusicAppAdamKoen.Migrations
                         name: "FK_Songs_Artists_ArtistId",
                         column: x => x.ArtistId,
                         principalTable: "Artists",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Playlists",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsPublic = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Playlists", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Playlists_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AlbumSongs",
+                columns: table => new
+                {
+                    AlbumId = table.Column<int>(type: "int", nullable: false),
+                    SongId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AlbumSongs", x => new { x.AlbumId, x.SongId });
+                    table.ForeignKey(
+                        name: "FK_AlbumSongs_Albums_AlbumId",
+                        column: x => x.AlbumId,
+                        principalTable: "Albums",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AlbumSongs_Songs_SongId",
+                        column: x => x.SongId,
+                        principalTable: "Songs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -122,12 +169,17 @@ namespace MusicAppAdamKoen.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "BirthDate", "Email", "Name", "Password" },
+                values: new object[] { 1, new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "testuser@example.com", "Test User", "hashedpassword" });
+
+            migrationBuilder.InsertData(
                 table: "Playlists",
-                columns: new[] { "Id", "CreatedAt", "IsPublic", "Name" },
+                columns: new[] { "Id", "CreatedAt", "IsPublic", "Name", "UserId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, "Playlist One" },
-                    { 2, new DateTime(2022, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, "Playlist Two" }
+                    { 1, new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, "Playlist One", 1 },
+                    { 2, new DateTime(2022, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, "Playlist Two", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -149,6 +201,16 @@ namespace MusicAppAdamKoen.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_AlbumSongs_SongId",
+                table: "AlbumSongs",
+                column: "SongId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Playlists_UserId",
+                table: "Playlists",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PlaylistSong_SongId",
                 table: "PlaylistSong",
                 column: "SongId");
@@ -163,16 +225,22 @@ namespace MusicAppAdamKoen.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Albums");
+                name: "AlbumSongs");
 
             migrationBuilder.DropTable(
                 name: "PlaylistSong");
+
+            migrationBuilder.DropTable(
+                name: "Albums");
 
             migrationBuilder.DropTable(
                 name: "Playlists");
 
             migrationBuilder.DropTable(
                 name: "Songs");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Artists");

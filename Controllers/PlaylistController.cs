@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using MusicApp_AdamKoen.DAL;
@@ -16,7 +17,7 @@ namespace MusicApp_AdamKoen.Controllers
         {
             _db = db;
         }
-
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var playlists = await _db.Playlists
@@ -39,6 +40,7 @@ namespace MusicApp_AdamKoen.Controllers
 
             return View(playlists);
         }
+        [Authorize]
         public IActionResult Create()
         {
             return View();

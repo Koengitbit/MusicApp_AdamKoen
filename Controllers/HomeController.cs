@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MusicApp_AdamKoen.DAL;
@@ -17,12 +18,13 @@ public class HomeController : Controller
         _logger = logger;
         _db = db;
     }
-        public IActionResult Index()
+    [Authorize]
+    public IActionResult Index()
     {
         return View();
     }
 
-
+    [Authorize]
     public IActionResult Privacy()
     {
         return View();

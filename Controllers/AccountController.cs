@@ -49,6 +49,7 @@ namespace MusicApp_AdamKoen.Controllers
 
                     var authProperties = new AuthenticationProperties
                     {
+                        //can remove this probably we'll see if it's useful later or remove
                     };
 
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);

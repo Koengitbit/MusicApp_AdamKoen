@@ -20,7 +20,6 @@ namespace MusicApp_AdamKoen
                 .AddCookie(options =>
                 {
                     options.LoginPath = "/Account/Login";
-                    options.LogoutPath = "/Account/Logout";
                     options.ExpireTimeSpan = TimeSpan.FromDays(30);
                 });
             builder.Services.ConfigureApplicationCookie(options =>
@@ -28,7 +27,6 @@ namespace MusicApp_AdamKoen
                 options.Cookie.HttpOnly = true;
                 options.ExpireTimeSpan = TimeSpan.FromDays(30); // 30 day cookie
                 options.LoginPath = "/Account/Login";
-                options.LogoutPath = "/Account/Logout";
                 options.SlidingExpiration = true; // refresh timeout when browsing
             });
 

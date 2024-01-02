@@ -1,7 +1,15 @@
 ﻿@model MusicApp_AdamKoen.ViewModels.LoginViewModel
 
 <h2>Login</h2>
-
+@if (User.Identity.IsAuthenticated)
+{
+    <p>You are already logged in.</p>
+    <form asp-controller="Account" asp-action="Logout" method="post">
+        <button type="submit" class="btn btn-primary">Logout</button>
+    </form>
+}
+else
+{
 <form asp-action="Login" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -18,3 +26,4 @@
     </div>
     <button type="submit" class="btn btn-primary">Login</button>
 </form>
+}

@@ -52,9 +52,6 @@ public class SpotifyDbContext : DbContext
             .WithMany(s => s.Albums)
             .HasForeignKey(albumSong => albumSong.SongId);
 
-        modelBuilder.Entity<User>()
-            .HasMany(u => u.Playlists);
-
         modelBuilder.Entity<User>().HasData(
              new User
              {

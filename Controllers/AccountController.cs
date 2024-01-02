@@ -84,5 +84,11 @@ namespace MusicApp_AdamKoen.Controllers
 
             return View(model);
         }
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login");
+        }
     }
 }

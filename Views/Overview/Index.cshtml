@@ -22,15 +22,95 @@
         .table tr:hover {
             background-color: #ddd;
         }
+
+        #playbackBar {
+            position: fixed;
+            bottom: 60px;
+            left: 0;
+            width: 100%;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            display: none;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .playback-info {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+        background-color: #FFFFFF;
+            height: 5px;
+            width: 0%;
+            transition: width 0.5s;
+        }
 </style>
+<script>
+    function formatDuration(seconds) {
+        var minutes = Math.floor(seconds / 60);
+        var remainingSeconds = seconds % 60
+
+        if (remainingSeconds < 10) {
+            remainingSeconds = '0' + remainingSeconds;
+        }
+
+        return minutes + ':' + remainingSeconds;
+    }
+    var currentTimer = null;
+
+    function playSong(songId, duration) {
+        // clear any existing timer
+        if (currentTimer) {
+            clearInterval(currentTimer);
+        }
+
+        var currentTime = 0;
+        var formattedDuration = formatDuration(duration);
+        var playbackInfo = 'ID: ' + songId + ', Duration: ' + currentTime + '/' + formattedDuration;
+        document.getElementById('playingSong').innerText = playbackInfo;
+        document.getElementById('playbackBar').style.display = 'block';
+
+        var progressBar = document.getElementById('progressBar');
+        progressBar.style.width = '0%';
+        // Start timer
+        currentTimer = setInterval(function () {
+            currentTime++;
+            var formattedCurrentTime = formatDuration(currentTime);
+            document.getElementById('playingSong').innerText =
+                'ID: ' + songId + ', Duration: ' + formattedCurrentTime + '/' + formattedDuration;
+
+            var progressPercentage = (currentTime / duration) * 100;
+            progressBar.style.width = progressPercentage + '%';
+            // Stop the timer
+            if (currentTime >= duration) {
+                clearInterval(currentTimer);
+                progressBar.style.width = '100%';
+            }
+        }, 1000); // Update each sec
+    }
+</script>
+<form method="get" action="@Url.Action("Index", "Overview")">
+    <input type="text" name="search" placeholder="Search songs..." />
+    <button type="submit">Search</button>
+</form>
+<div id="playbackBar">
+    <div class="playback-info">
+        Now Playing: <span id="playingSong"></span>
+    </div>
+    <div class="progress-bar" id="progressBar"></div>
+</div>
 <table class="table">
     <thead>
         <tr>
+            <th>Id</th>
             <th>Title</th>
             <th>Artist</th>
             <th>Genre</th>
             <th>Release Date</th>
-            <th>Duration (seconds)</th>
+            <th>Duration</th>
             <th>Playlists</th>
         </tr>
     </thead>
@@ -38,11 +118,14 @@
         @foreach (var song in Model)
         {
             <tr>
+                <td>@song.Id</td>
                 <td>@song.Title</td>
                 <td>@song.ArtistName</td>
                 <td>@song.Genre</td>
                 <td>@song.ReleaseDate.ToShortDateString()</td>
-                <td>@song.Duration</td>
+                <td>
+                    @string.Format("{0:D2}:{1:D2}", song.Duration / 60, song.Duration % 60)
+                </td>
                 <td>
                     <ul>
                         @foreach (var playlist in song.Playlists)
@@ -51,6 +134,10 @@
                         }
                     </ul>
                 </td>
+                <td>
+                    <button onclick="playSong('@song.Id', '@song.Duration')">Play</button>
+                </td>
+
             </tr>
         }
     </tbody>

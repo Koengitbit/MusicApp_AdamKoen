@@ -1,14 +1,47 @@
-﻿@model List<MusicApp_AdamKoen.ViewModels.PlaylistViewModel>
+﻿@model MusicApp_AdamKoen.ViewModels.IndexViewModel
 
-<h2>Playlists</h2>
-<a href="@Url.Action("Create", "Playlist")" class="btn btn-primary">Create New Playlist</a>
 
-@foreach (var playlist in Model)
+<style>
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table th {
+            text-align: left;
+            background-color: #f2f2f2;
+        }
+
+        .table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .table tr:hover {
+            background-color: #ddd;
+        }
+</style>
+<h1>My Playlists</h1>
+@foreach (var playlist in Model.MyPlaylists)
 {
-    <div>
-        <h3>@playlist.Name</h3>
-        <p>Created At: @playlist.CreatedAt.ToShortDateString()</p>
-        <p>Public: @(playlist.IsPublic ? "Yes" : "No")</p>
+            <table>
+            <tr>
+                <th>Name</th>
+                <th>Created At</th>
+                <th>Public</th>
+                <th>UserId</th>
+            </tr>
+        
+        <td>@playlist.Name</td>
+        <td>@playlist.CreatedAt.ToShortDateString()</td>
+        <td>@(playlist.IsPublic ? "Yes" : "No")</td>
+        <td>@playlist.UserId</td>
+        </table>
+
 
         <h4>Songs</h4>
         <table>
@@ -26,9 +59,53 @@
                     <td>@song.ArtistName</td>
                     <td>@song.Genre</td>
                     <td>@song.ReleaseDate.ToShortDateString()</td>
-                    <td>@song.Duration</td>
+                    <td>@song.Duration</td
                 </tr>
             }
         </table>
-    </div>
+}
+<h2>All Playlists</h2>
+<a href="@Url.Action("Create", "Playlist")" class="btn btn-primary">Create New Playlist</a>
+@foreach (var playlist in Model.AllPlaylists)
+{
+    @if (playlist.IsPublic == true)
+    {
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Created At</th>
+                <th>Public</th>
+                <th>UserId</th>
+            </tr>
+            <td>@playlist.Name</td>
+            <td>@playlist.CreatedAt.ToShortDateString()</td>
+            <td>@(playlist.IsPublic ? "Yes" : "No")</td>
+            <td>@playlist.UserId</td>
+        </table>
+
+
+        <h4>Songs</h4>
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Artist</th>
+                <th>Genre</th>
+                <th>Release Date</th>
+                <th>Duration</th>
+            </tr>
+            @foreach (var song in playlist.Songs)
+            {
+                <tr>
+                    <td>@song.Title</td>
+                    <td>@song.ArtistName</td>
+                    <td>@song.Genre</td>
+                    <td>@song.ReleaseDate.ToShortDateString()</td>
+                    <td>@song.Duration</td
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+    }
 }

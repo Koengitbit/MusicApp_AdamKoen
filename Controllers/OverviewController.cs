@@ -23,6 +23,7 @@ public class OverviewController : Controller
                 .ThenInclude(ps => ps.Playlist)
             .Select(s => new SongViewModel
             {
+                Id = s.Id,
                 Title = s.Title,
                 ArtistName = s.Artist.Name,
                 Genre = s.Genre,
@@ -31,7 +32,6 @@ public class OverviewController : Controller
                 Playlists = s.Playlists.Select(p => p.Playlist.Name).ToList()
             })
             .ToList();
-
         return View(songs);
     }
 }

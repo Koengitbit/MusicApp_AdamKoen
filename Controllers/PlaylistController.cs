@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -20,13 +21,34 @@ namespace MusicApp_AdamKoen.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            var playlists = await _db.Playlists
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var myPlaylists = await _db.Playlists
+            .Where(p => p.UserId == currentUserId)
+            .Select(p => new PlaylistViewModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                IsPublic = p.IsPublic,
+                CreatedAt = p.CreatedAt,
+                UserId = p.UserId,
+                Songs = p.Songs.Select(ps => new SongViewModel
+                {
+                    Title = ps.Song.Title,
+                    ArtistName = ps.Song.Artist.Name,
+                    Genre = ps.Song.Genre,
+                    ReleaseDate = ps.Song.ReleaseDate,
+                    Duration = ps.Song.Duration,
+                    Playlists = ps.Song.Playlists.Select(pl => pl.Playlist.Name).ToList()
+                }).ToList()
+            }).ToListAsync();
+            var allPlaylists = await _db.Playlists
                 .Select(p => new PlaylistViewModel
                 {
                     Id = p.Id,
                     Name = p.Name,
                     IsPublic = p.IsPublic,
                     CreatedAt = p.CreatedAt,
+                    UserId = p.UserId,
                     Songs = p.Songs.Select(ps => new SongViewModel
                     {
                         Title = ps.Song.Title,
@@ -38,7 +60,12 @@ namespace MusicApp_AdamKoen.Controllers
                     }).ToList()
                 }).ToListAsync();
 
-            return View(playlists);
+            var viewModel = new IndexViewModel
+            {
+                MyPlaylists = myPlaylists,
+                AllPlaylists = allPlaylists
+            };
+            return View(viewModel);
         }
         [Authorize]
         public IActionResult Create()
@@ -64,11 +91,14 @@ namespace MusicApp_AdamKoen.Controllers
 
             if (ModelState.IsValid)
             {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
                 var newPlaylist = new Playlist
                 {
                     Name = playlistViewModel.Name,
                     IsPublic = playlistViewModel.IsPublic,
                     CreatedAt = DateTime.Now,
+                    UserId = int.Parse(userId),
                     Songs = new List<PlaylistSong>()
                 };
 

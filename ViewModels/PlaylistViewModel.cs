@@ -10,6 +10,7 @@ namespace MusicApp_AdamKoen.ViewModels
         [Required]
         public bool IsPublic { get; set; }
         public DateTime CreatedAt { get; set; }
+        public int UserId { get; set; }
         public List<SongViewModel>? Songs { get; set; }
     }
 }

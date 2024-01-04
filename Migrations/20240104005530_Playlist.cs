@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MusicAppAdamKoen.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Playlist : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,6 @@ namespace MusicAppAdamKoen.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ReleaseYear = table.Column<DateTime>(name: "Release_Year", type: "datetime2", nullable: false)
                 },
@@ -127,7 +126,7 @@ namespace MusicAppAdamKoen.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PlaylistSong",
+                name: "PlaylistSongs",
                 columns: table => new
                 {
                     PlaylistId = table.Column<int>(type: "int", nullable: false),
@@ -135,15 +134,15 @@ namespace MusicAppAdamKoen.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PlaylistSong", x => new { x.PlaylistId, x.SongId });
+                    table.PrimaryKey("PK_PlaylistSongs", x => new { x.PlaylistId, x.SongId });
                     table.ForeignKey(
-                        name: "FK_PlaylistSong_Playlists_PlaylistId",
+                        name: "FK_PlaylistSongs_Playlists_PlaylistId",
                         column: x => x.PlaylistId,
                         principalTable: "Playlists",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PlaylistSong_Songs_SongId",
+                        name: "FK_PlaylistSongs_Songs_SongId",
                         column: x => x.SongId,
                         principalTable: "Songs",
                         principalColumn: "Id",
@@ -152,11 +151,11 @@ namespace MusicAppAdamKoen.Migrations
 
             migrationBuilder.InsertData(
                 table: "Albums",
-                columns: new[] { "Id", "Name", "Release_Year", "Title" },
+                columns: new[] { "Id", "Release_Year", "Title" },
                 values: new object[,]
                 {
-                    { 1, "Album One", new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Album One" },
-                    { 2, "Album Two", new DateTime(2021, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Album Two" }
+                    { 1, new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Thriller 25 Super Deluxe Edition" },
+                    { 2, new DateTime(2021, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "All Eyez On Me" }
                 });
 
             migrationBuilder.InsertData(
@@ -164,8 +163,8 @@ namespace MusicAppAdamKoen.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 1, "Artist One" },
-                    { 2, "Artist Two" }
+                    { 1, "Michael Jackson" },
+                    { 2, "2Pac" }
                 });
 
             migrationBuilder.InsertData(
@@ -187,12 +186,19 @@ namespace MusicAppAdamKoen.Migrations
                 columns: new[] { "Id", "ArtistId", "Duration", "Genre", "ReleaseDate", "Title" },
                 values: new object[,]
                 {
-                    { 1, 1, 210, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Song One" },
-                    { 2, 2, 180, "Rock", new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Song Two" }
+                    { 1, 1, 362, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Wanna Be Startin' Somethin'" },
+                    { 2, 2, 180, "Hip Hop", new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Changes" },
+                    { 3, 1, 260, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Baby Be Mine" },
+                    { 4, 1, 222, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "The Girl Is Mine" },
+                    { 5, 1, 210, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Thriller" },
+                    { 6, 1, 210, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Beat it" },
+                    { 7, 1, 210, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Billie Jean" },
+                    { 8, 1, 210, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Human Nature" },
+                    { 9, 1, 210, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "P.Y.T (Pretty Young Thing)" }
                 });
 
             migrationBuilder.InsertData(
-                table: "PlaylistSong",
+                table: "PlaylistSongs",
                 columns: new[] { "PlaylistId", "SongId" },
                 values: new object[,]
                 {
@@ -211,8 +217,8 @@ namespace MusicAppAdamKoen.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PlaylistSong_SongId",
-                table: "PlaylistSong",
+                name: "IX_PlaylistSongs_SongId",
+                table: "PlaylistSongs",
                 column: "SongId");
 
             migrationBuilder.CreateIndex(
@@ -228,7 +234,7 @@ namespace MusicAppAdamKoen.Migrations
                 name: "AlbumSongs");
 
             migrationBuilder.DropTable(
-                name: "PlaylistSong");
+                name: "PlaylistSongs");
 
             migrationBuilder.DropTable(
                 name: "Albums");

@@ -12,5 +12,7 @@ namespace MusicApp_AdamKoen.ViewModels
         public DateTime CreatedAt { get; set; }
         public int UserId { get; set; }
         public List<SongViewModel>? Songs { get; set; }
+        public int? SelectedSongId { get; set; }
+        public int? SongToRemoveId { get; set; }
     }
 }

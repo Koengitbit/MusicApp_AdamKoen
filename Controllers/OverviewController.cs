@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MusicApp_AdamKoen.DAL;
 using MusicApp_AdamKoen.ViewModels;
@@ -14,7 +13,7 @@ public class OverviewController : Controller
     {
         _db = db;
     }
-    [Authorize]
+
     public IActionResult Index()
     {
         var songs = _db.Songs
@@ -32,6 +31,7 @@ public class OverviewController : Controller
                 Playlists = s.Playlists.Select(p => p.Playlist.Name).ToList()
             })
             .ToList();
+
         return View(songs);
     }
 }

@@ -14,6 +14,7 @@ public class SpotifyDbContext : DbContext
     public DbSet<Artist> Artists { get; set; }
     public DbSet<Song> Songs { get; set; }
     public DbSet<Playlist> Playlists { get; set; }
+    public DbSet<PlaylistSong> PlaylistSongs { get; set; }
     public DbSet<AlbumSong> AlbumSongs { get; set; }
     public DbSet<User> Users { get; set; }
 
@@ -58,31 +59,37 @@ public class SpotifyDbContext : DbContext
                  Id = 1,
                  Name = "Test User",
                  Email = "testuser@example.com",
-                 Password = "hashedpassword", // Ensure this is properly hashed in a real scenario
+                 Password = "hashedpassword",
                  BirthDate = new DateTime(1990, 1, 1)
              }
          );
 
         modelBuilder.Entity<Artist>().HasData(
-            new Artist { Id = 1, Name = "Artist One" },
-            new Artist { Id = 2, Name = "Artist Two" }
+            new Artist { Id = 1, Name = "Michael Jackson" },
+            new Artist { Id = 2, Name = "2Pac" }
         );
 
         modelBuilder.Entity<Album>().HasData(
-            new Album { Id = 1, Title = "Album One", Name = "Album One", Release_Year = new DateTime(2020, 1, 1) },
-            new Album { Id = 2, Title = "Album Two", Name = "Album Two", Release_Year = new DateTime(2021, 1, 1) }
+            new Album { Id = 1, Title = "Thriller 25 Super Deluxe Edition", Release_Year = new DateTime(2020, 1, 1) },
+            new Album { Id = 2, Title = "All Eyez On Me", Release_Year = new DateTime(2021, 1, 1) }
         );
 
         modelBuilder.Entity<Song>().HasData(
-            new Song { Id = 1, Title = "Song One", Genre = "Pop", ReleaseDate = new DateTime(2020, 5, 1), Duration = 210, ArtistId = 1 },
-            new Song { Id = 2, Title = "Song Two", Genre = "Rock", ReleaseDate = new DateTime(2021, 6, 1), Duration = 180, ArtistId = 2 }
+            new Song { Id = 1, Title = "Wanna Be Startin' Somethin'", Genre = "Pop", ReleaseDate = new DateTime(2020, 5, 1), Duration = 362, ArtistId = 1 },
+            new Song { Id = 2, Title = "Changes", Genre = "Hip Hop", ReleaseDate = new DateTime(2021, 6, 1), Duration = 180, ArtistId = 2 },
+            new Song { Id = 3, Title = "Baby Be Mine", Genre = "Pop", ReleaseDate = new DateTime(2020, 5, 1), Duration = 260, ArtistId = 1 },
+            new Song { Id = 4, Title = "The Girl Is Mine", Genre = "Pop", ReleaseDate = new DateTime(2020, 5, 1), Duration = 222, ArtistId = 1 },
+            new Song { Id = 5, Title = "Thriller", Genre = "Pop", ReleaseDate = new DateTime(2020, 5, 1), Duration = 210, ArtistId = 1 },
+            new Song { Id = 6, Title = "Beat it", Genre = "Pop", ReleaseDate = new DateTime(2020, 5, 1), Duration = 210, ArtistId = 1 },
+            new Song { Id = 7, Title = "Billie Jean", Genre = "Pop", ReleaseDate = new DateTime(2020, 5, 1), Duration = 210, ArtistId = 1 },
+            new Song { Id = 8, Title = "Human Nature", Genre = "Pop", ReleaseDate = new DateTime(2020, 5, 1), Duration = 210, ArtistId = 1 },
+            new Song { Id = 9, Title = "P.Y.T (Pretty Young Thing)", Genre = "Pop", ReleaseDate = new DateTime(2020, 5, 1), Duration = 210, ArtistId = 1 }
         );
         modelBuilder.Entity<Playlist>().HasData(
             new Playlist { Id = 1, Name = "Playlist One", IsPublic = true, CreatedAt = new DateTime(2022, 1, 1), UserId = 1 },
             new Playlist { Id = 2, Name = "Playlist Two", IsPublic = false, CreatedAt = new DateTime(2022, 2, 1), UserId = 1 }
         );
 
-        // For Many-to-Many relationship, you would need to add entries in the join table
         modelBuilder.Entity<PlaylistSong>().HasData(
             new PlaylistSong { PlaylistId = 1, SongId = 1 },
             new PlaylistSong { PlaylistId = 2, SongId = 2 }

@@ -1,26 +1,24 @@
 ﻿@model MusicApp_AdamKoen.ViewModels.IndexViewModel
 
-<h2>All Playlists</h2>
-<a href="@Url.Action("Create", "Playlist")" class="btn btn-primary">Create New Playlist</a>
-@foreach (var playlist in Model.AllPlaylists)
+<h1>My Playlists</h1>
+@foreach (var playlist in Model.MyPlaylists)
 {
-    @if (playlist.IsPublic == true)
-    {
-        <table class="table">
+            <table class="table">
             <tr>
                 <th>Name</th>
                 <th>Created At</th>
                 <th>Public</th>
                 <th>UserId</th>
             </tr>
+        
             <td>
                 <a asp-action="Details" asp-controller="Playlist" asp-route-id="@playlist.Id">
                     @playlist.Name
                 </a>
             </td>
-            <td>@playlist.CreatedAt.ToShortDateString()</td>
-            <td>@(playlist.IsPublic ? "Yes" : "No")</td>
-            <td>@playlist.UserId</td>
+        <td>@playlist.CreatedAt.ToShortDateString()</td>
+        <td>@(playlist.IsPublic ? "Yes" : "No")</td>
+        <td>@playlist.UserId</td>
         </table>
 
 
@@ -44,8 +42,4 @@
                 </tr>
             }
         </table>
-    }
-    else
-    {
-    }
 }

@@ -12,8 +12,8 @@ using MusicApp_AdamKoen.DAL;
 namespace MusicAppAdamKoen.Migrations
 {
     [DbContext(typeof(SpotifyDbContext))]
-    [Migration("20240101190236_init")]
-    partial class init
+    [Migration("20240104005530_Playlist")]
+    partial class Playlist
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,10 +33,6 @@ namespace MusicAppAdamKoen.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("Release_Year")
                         .HasColumnType("datetime2");
 
@@ -52,16 +48,14 @@ namespace MusicAppAdamKoen.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Album One",
                             ReleaseYear = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Album One"
+                            Title = "Thriller 25 Super Deluxe Edition"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Album Two",
                             ReleaseYear = new DateTime(2021, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Album Two"
+                            Title = "All Eyez On Me"
                         });
                 });
 
@@ -100,12 +94,12 @@ namespace MusicAppAdamKoen.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Artist One"
+                            Name = "Michael Jackson"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Artist Two"
+                            Name = "2Pac"
                         });
                 });
 
@@ -167,7 +161,7 @@ namespace MusicAppAdamKoen.Migrations
 
                     b.HasIndex("SongId");
 
-                    b.ToTable("PlaylistSong");
+                    b.ToTable("PlaylistSongs");
 
                     b.HasData(
                         new
@@ -218,19 +212,82 @@ namespace MusicAppAdamKoen.Migrations
                         {
                             Id = 1,
                             ArtistId = 1,
-                            Duration = 210,
+                            Duration = 362,
                             Genre = "Pop",
                             ReleaseDate = new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Song One"
+                            Title = "Wanna Be Startin' Somethin'"
                         },
                         new
                         {
                             Id = 2,
                             ArtistId = 2,
                             Duration = 180,
-                            Genre = "Rock",
+                            Genre = "Hip Hop",
                             ReleaseDate = new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Song Two"
+                            Title = "Changes"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ArtistId = 1,
+                            Duration = 260,
+                            Genre = "Pop",
+                            ReleaseDate = new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Baby Be Mine"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ArtistId = 1,
+                            Duration = 222,
+                            Genre = "Pop",
+                            ReleaseDate = new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "The Girl Is Mine"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ArtistId = 1,
+                            Duration = 210,
+                            Genre = "Pop",
+                            ReleaseDate = new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Thriller"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ArtistId = 1,
+                            Duration = 210,
+                            Genre = "Pop",
+                            ReleaseDate = new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Beat it"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ArtistId = 1,
+                            Duration = 210,
+                            Genre = "Pop",
+                            ReleaseDate = new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Billie Jean"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ArtistId = 1,
+                            Duration = 210,
+                            Genre = "Pop",
+                            ReleaseDate = new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Human Nature"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            ArtistId = 1,
+                            Duration = 210,
+                            Genre = "Pop",
+                            ReleaseDate = new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "P.Y.T (Pretty Young Thing)"
                         });
                 });
 

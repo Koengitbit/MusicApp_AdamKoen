@@ -20,3 +20,49 @@ html {
 body {
   margin-bottom: 60px;
 }
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+    .table th, .table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    .table th {
+        text-align: left;
+        background-color: #f2f2f2;
+    }
+
+    .table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .table tr:hover {
+        background-color: #ddd;
+    }
+
+#playbackBar {
+    position: fixed;
+    bottom: 60px;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    display: none;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.playback-info {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.progress-bar {
+    background-color: #FFFFFF;
+    height: 5px;
+    width: 0%;
+    transition: width 0.5s;
+}

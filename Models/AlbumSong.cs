@@ -6,4 +6,5 @@ public class AlbumSong
     public Album Album { get; set; }
     public int SongId { get; set; }
     public Song Song { get; set; }
+    public int OrderIndex { get; set; }
 }

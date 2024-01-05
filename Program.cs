@@ -16,8 +16,7 @@ namespace MusicApp_AdamKoen
             builder.Services.AddDbContext<SpotifyDbContext>();
             builder.Services.AddScoped<PasswordHasher<User>>();
             //cookie auth
-            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
                 {
                     options.LoginPath = "/Account/Login";
                     options.ExpireTimeSpan = TimeSpan.FromDays(30);

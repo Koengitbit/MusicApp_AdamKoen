@@ -17,6 +17,8 @@ public class SpotifyDbContext : DbContext
     public DbSet<PlaylistSong> PlaylistSongs { get; set; }
     public DbSet<AlbumSong> AlbumSongs { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Like> Likes { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -91,9 +93,20 @@ public class SpotifyDbContext : DbContext
         );
 
         modelBuilder.Entity<PlaylistSong>().HasData(
-            new PlaylistSong { PlaylistId = 1, SongId = 1 },
-            new PlaylistSong { PlaylistId = 2, SongId = 2 }
+            new PlaylistSong { PlaylistId = 1, SongId = 1,OrderIndex = 2},
+            new PlaylistSong { PlaylistId = 1, SongId = 2,OrderIndex = 1}
         );
+        modelBuilder.Entity<AlbumSong>().HasData(
+           new AlbumSong { AlbumId = 1, SongId = 1, OrderIndex = 0 },
+           new AlbumSong { AlbumId = 1, SongId = 3, OrderIndex = 1 },
+           new AlbumSong { AlbumId = 1, SongId = 4, OrderIndex = 2 },
+           new AlbumSong { AlbumId = 1, SongId = 5, OrderIndex = 3 },
+           new AlbumSong { AlbumId = 1, SongId = 6, OrderIndex = 4 },
+           new AlbumSong { AlbumId = 1, SongId = 7, OrderIndex = 5 },
+           new AlbumSong { AlbumId = 1, SongId = 8, OrderIndex = 6 },
+           new AlbumSong { AlbumId = 1, SongId = 9, OrderIndex = 7 }
+
+       );
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -1,39 +1,82 @@
 ﻿@model MusicApp_AdamKoen.ViewModels.PlaylistViewModel
 
+@{
+    var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+}
+
+
+<div id="playbackBar">
+    <div class="playback-info">
+        Now Playing: <span id="playingSong"></span>
+        <button onclick="skipSong()">Skip</button>
+    </div>
+    <div class="progress-bar" id="progressBar"></div>
+</div>
 <h2>@Model.Name</h2>
 <p>Created At: @Model.CreatedAt.ToShortDateString()</p>
 <p>Public: @(Model.IsPublic ? "Yes" : "No")</p>
 <p>User ID: @Model.UserId</p>
+<button class="like-button" onclick="likeItem('playlist', @Model.Id)">
+    <i class="@(Model.IsLiked ? "fa-solid" : "fa-regular") fa-heart"></i>
+</button>
 @if (TempData["ErrorMessage"] != null)
 {
     <div class="alert alert-danger">
         @TempData["ErrorMessage"]
     </div>
 }
-<form asp-action="AddSongToPlaylist" method="post">
-    <input type="hidden" name="playlistId" value="@Model.Id" />
-    <select asp-for="SelectedSongId" asp-items="ViewBag.Songs"></select>
-    <button type="submit">Add Song to Playlist</button>
-</form>
+@if (Model.UserId.ToString() == currentUserId)
+{
+    <form asp-action="AddSongToPlaylist" method="post">
+        <input type="hidden" name="playlistId" value="@Model.Id" />
+        <select asp-for="SelectedSongId" asp-items="ViewBag.Songs"></select>
+        <button type="submit">Add Song to Playlist</button>
+    </form>
+
+
+   
+
+    @if (Model.OtherPlaylists != null && Model.OtherPlaylists.Any())
+    {
+        <form asp-action="AddPlaylistToPlaylist" method="post">
+            <input type="hidden" name="targetPlaylistId" value="@Model.Id" />
+            <select name="sourcePlaylistId" asp-items="@(new SelectList(Model.OtherPlaylists, "Id", "Name"))"></select>
+            <button type="submit">Add Playlist to This Playlist</button>
+        </form>
+    }
+}
+<button onclick="playAllSongs()">Play Playlist</button>
+<button onclick="playAllSongsShuffled()">Play Playlist Shuffled</button>
+
+
+
 <h3>Songs</h3>
-<table class="table">
+<table class="table" id="songsTable" data-playlist-id="@Model.Id">
     <tr>
         <th>Title</th>
         <th>Id</th>
         <th>Actions</th>
         <!-- ... other headers ... -->
     </tr>
-    @foreach (var song in Model.Songs)
+    @foreach (var song in Model.Songs.OrderBy(s => s.OrderIndex))
     {
-        <tr>
+        <tr draggable="true" class="song-row" id="song-@song.Id" data-duration="@song.Duration">
             <td>@song.Title</td>
             <td>@song.Id</td>
             <td>
-                <form asp-action="RemoveSongFromPlaylist" method="post">
-                    <input type="hidden" name="playlistId" value="@Model.Id" />
-                    <input type="hidden" name="songToRemoveId" value="@song.Id" />
-                    <button type="submit">Remove</button>
-                </form>
+                @if (Model.UserId.ToString() == currentUserId)
+                {
+                    <form asp-action="RemoveSongFromPlaylist" method="post">
+                        <input type="hidden" name="playlistId" value="@Model.Id" />
+                        <input type="hidden" name="songToRemoveId" value="@song.Id" />
+                        <button type="submit">Remove</button>
+                    </form>
+                }
+                <button class="like-button" onclick="likeItem('song', @song.Id)">
+                    <i class="@(Model.LikedSongs != null && Model.LikedSongs.ContainsKey(song.Id) && Model.LikedSongs[song.Id] ? "fa-solid" : "fa-regular") fa-heart"></i>
+                </button>
+                @* <button onclick="likeItem('song', @song.Id)">Like</button> *@
+                <button onclick="playSong('@song.Id', '@song.Duration')">Play</button>
             </td>
             <!-- ... other data cells ... -->
         </tr>

@@ -14,5 +14,4 @@ public class Playlist
     public int UserId { get; set; }
     public User User { get; set; }
     public List<PlaylistSong>? Songs { get; set; }
-
 }

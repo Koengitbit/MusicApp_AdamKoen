@@ -12,8 +12,8 @@ using MusicApp_AdamKoen.DAL;
 namespace MusicAppAdamKoen.Migrations
 {
     [DbContext(typeof(SpotifyDbContext))]
-    [Migration("20240104005530_Playlist")]
-    partial class Playlist
+    [Migration("20240104164738_OrderAddedToPlaylistSong")]
+    partial class OrderAddedToPlaylistSong
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -157,6 +157,9 @@ namespace MusicAppAdamKoen.Migrations
                     b.Property<int>("SongId")
                         .HasColumnType("int");
 
+                    b.Property<int>("OrderIndex")
+                        .HasColumnType("int");
+
                     b.HasKey("PlaylistId", "SongId");
 
                     b.HasIndex("SongId");
@@ -167,12 +170,14 @@ namespace MusicAppAdamKoen.Migrations
                         new
                         {
                             PlaylistId = 1,
-                            SongId = 1
+                            SongId = 1,
+                            OrderIndex = 2
                         },
                         new
                         {
-                            PlaylistId = 2,
-                            SongId = 2
+                            PlaylistId = 1,
+                            SongId = 2,
+                            OrderIndex = 1
                         });
                 });
 

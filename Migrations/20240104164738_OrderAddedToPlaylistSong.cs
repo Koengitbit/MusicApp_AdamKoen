@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MusicAppAdamKoen.Migrations
 {
     /// <inheritdoc />
-    public partial class Playlist : Migration
+    public partial class OrderAddedToPlaylistSong : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -130,7 +130,8 @@ namespace MusicAppAdamKoen.Migrations
                 columns: table => new
                 {
                     PlaylistId = table.Column<int>(type: "int", nullable: false),
-                    SongId = table.Column<int>(type: "int", nullable: false)
+                    SongId = table.Column<int>(type: "int", nullable: false),
+                    OrderIndex = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -199,11 +200,11 @@ namespace MusicAppAdamKoen.Migrations
 
             migrationBuilder.InsertData(
                 table: "PlaylistSongs",
-                columns: new[] { "PlaylistId", "SongId" },
+                columns: new[] { "PlaylistId", "SongId", "OrderIndex" },
                 values: new object[,]
                 {
-                    { 1, 1 },
-                    { 2, 2 }
+                    { 1, 1, 2 },
+                    { 1, 2, 1 }
                 });
 
             migrationBuilder.CreateIndex(

@@ -9,6 +9,7 @@ public class SongViewModel
     public DateTime ReleaseDate { get; set; }
     public int Duration { get; set; }
     public List<string> Playlists { get; set; }
-    //Currently not in use.
+    //Is playing is still not in use, might have to delete soon I think.
     public bool IsPlaying { get; set; }
+    public int OrderIndex { get; set; }
 }

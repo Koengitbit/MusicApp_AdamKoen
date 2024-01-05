@@ -1,8 +1,4 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-//Code to format duration to mm:ss
+﻿//Code to format duration to mm:ss
 function formatDuration(seconds) {
     var minutes = Math.floor(seconds / 60);
     var remainingSeconds = seconds % 60
@@ -67,6 +63,153 @@ function addToQueue(songId, duration) {
 function skipSong() {
     if (currentTimer) {
         clearInterval(currentTimer);
-        playNextSong();
+        if (songQueue.length > 0) {
+            playNextSong();
+        } else {
+            // Hide the playback bar and reset the current timer
+            document.getElementById('playbackBar').style.display = 'none';
+            currentTimer = null;
+            document.getElementById('playingSong').innerText = '';
+        }
     }
 }
+//Drag and reorder functionality
+document.addEventListener('DOMContentLoaded', (event) => {
+    const table = document.getElementById('songsTable');
+
+    let draggedItem = null;
+
+    table.addEventListener('dragstart', (e) => {
+        console.log("Dragstart");
+        draggedItem = e.target;
+    });
+
+    table.addEventListener('dragover', (e) => {
+        console.log("Dragover");
+        e.preventDefault();
+    });
+
+    table.addEventListener('drop', (e) => {
+        e.preventDefault();
+
+        let targetRow = e.target.closest('tr');
+        if (targetRow && draggedItem && targetRow.parentNode === draggedItem.parentNode) {
+            swapElements(draggedItem, targetRow);
+            updateSongOrder();
+        }
+    });
+});
+
+function updateSongOrder() {
+    const table = document.getElementById('songsTable');
+    const playlistId = table.getAttribute('data-playlist-id');
+    const songIds = Array.from(document.querySelectorAll('#songsTable .song-row'))
+        .map(row => row.id.split('-')[1]); // Extracting song IDs
+
+    console.log(songIds);
+
+    fetch(`/Playlist/UpdateSongOrder?playlistId=${playlistId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(songIds),
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Order updated:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+}
+//Helper function for drag and reorder function
+function swapElements(elem1, elem2) {
+    const parent1 = elem1.parentNode;
+    const next1 = elem1.nextSibling === elem2 ? elem1 : elem1.nextSibling;
+    const parent2 = elem2.parentNode;
+    const next2 = elem2.nextSibling === elem1 ? elem2 : elem2.nextSibling;
+
+    parent1.insertBefore(elem2, next1);
+    parent2.insertBefore(elem1, next2);
+}
+
+//Playlist function
+function playAllSongs() {
+    document.querySelectorAll('#songsTable .song-row').forEach(row => {
+        const songId = row.id.split('-')[1];
+        const duration = row.getAttribute('data-duration'); 
+        addToQueue(songId, duration);
+    });
+
+    // Start playing the first song if no song is currently playing
+    if (!currentTimer && songQueue.length > 0) {
+        const nextSong = songQueue.shift();
+        startPlaying(nextSong.songId, nextSong.duration);
+    }
+}
+
+function playAllSongsShuffled() {
+    let songs = Array.from(document.querySelectorAll('#songsTable .song-row'))
+        .map(row => ({
+            songId: row.id.split('-')[1],
+            duration: row.getAttribute('data-duration')
+        }));
+
+    // call shuffle function
+    shuffleArray(songs);
+
+    // Add shuffled songs to the queue
+    songs.forEach(song => addToQueue(song.songId, song.duration));
+
+    // Start playing the first song if no song is currently playing
+    if (!currentTimer && songQueue.length > 0) {
+        const nextSong = songQueue.shift();
+        startPlaying(nextSong.songId, nextSong.duration);
+    }
+}
+
+// Utility function to shuffle an array
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+// Like
+function likeItem(type, itemId) {
+    fetch('/Playlist/Like', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': document.querySelector('[name=__RequestVerificationToken]').value
+        },
+        body: JSON.stringify({ type, itemId })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log(type + ' liked successfully');
+                updateLikeButton(type, itemId, data.liked);
+            }
+            
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function updateLikeButton(type, itemId, isLiked) {
+    const likeButtonSelector = `#${type}-${itemId} .like-button i`;
+
+    const likeButton = document.querySelector(likeButtonSelector);
+    if (likeButton) {
+        if (isLiked) {
+            likeButton.classList.remove('fa-regular');
+            likeButton.classList.add('fa-solid');
+        } else {
+            likeButton.classList.remove('fa-solid');
+            likeButton.classList.add('fa-regular');
+        }
+    }
+}
+
+

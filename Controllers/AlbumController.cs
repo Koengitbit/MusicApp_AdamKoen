@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MusicApp_AdamKoen.DAL;
 using MusicApp_AdamKoen.ViewModels;
 
@@ -12,7 +13,7 @@ public class AlbumController : Controller
     {
         _db = db;
     }
-
+    [Authorize]
     public IActionResult Index()
     {
         var albums = _db.Albums.Select(a => new AlbumViewModel

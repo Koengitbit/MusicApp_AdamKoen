@@ -2,50 +2,29 @@
 
 <h2>All Playlists</h2>
 <a href="@Url.Action("Create", "Playlist")" class="btn btn-primary">Create New Playlist</a>
+<table class="table">
+    <tr>
+        <th>Name</th>
+        <th>Created At</th>
+        <th>Total Songs</th>
+        <th>Total Duration</th>
+    </tr>
+
 @foreach (var playlist in Model.AllPlaylists)
 {
     @if (playlist.IsPublic == true)
     {
-        <table class="table">
             <tr>
-                <th>Name</th>
-                <th>Created At</th>
-                <th>Public</th>
-                <th>UserId</th>
-            </tr>
             <td>
                 <a asp-action="Details" asp-controller="Playlist" asp-route-id="@playlist.Id">
                     @playlist.Name
                 </a>
             </td>
             <td>@playlist.CreatedAt.ToShortDateString()</td>
-            <td>@(playlist.IsPublic ? "Yes" : "No")</td>
-            <td>@playlist.UserId</td>
-        </table>
-
-
-        <h4>Songs</h4>
-        <table class="table">
-            <tr>
-                <th>Title</th>
-                <th>Artist</th>
-                <th>Genre</th>
-                <th>Release Date</th>
-                <th>Duration</th>
+            <td>@playlist.TotalSongs</td>
+            <td>@TimeSpan.FromSeconds(playlist.TotalDuration).ToString(@"hh\:mm\:ss")</td>
             </tr>
-            @foreach (var song in playlist.Songs)
-            {
-                <tr>
-                    <td>@song.Title</td>
-                    <td>@song.ArtistName</td>
-                    <td>@song.Genre</td>
-                    <td>@song.ReleaseDate.ToShortDateString()</td>
-                    <td>@song.Duration</td
-                </tr>
-            }
-        </table>
-    }
-    else
-    {
     }
 }
+</table>
+

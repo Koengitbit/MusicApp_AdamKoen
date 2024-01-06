@@ -1,0 +1,48 @@
+﻿@model MusicApp_AdamKoen.ViewModels.AlbumViewModel
+
+@{
+    ViewData["Title"] = "Album Details";
+}
+
+<div id="playbackBar">
+    <div class="playback-info">
+        Now Playing: <span id="playingSong"></span>
+        <button onclick="skipSong()">Skip</button>
+    </div>
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<h2>@Model.Title Album</h2>
+<p>Release Year: @Model.ReleaseYear.Year</p>
+
+<button id="like-album-@Model.Id" class="like-button" onclick="likeAlbum(@Model.Id)">
+    <i id="like-album-@Model.Id-icon" class="@(Model.IsLiked ? "fa-solid" : "fa-regular") fa-heart"></i>
+</button>
+
+<h3>Songs</h3>
+<table class="table" id="songsTable">
+    <tr>
+        <th>#</th>
+        <th>Title</th>
+        <th>Artist</th>
+        <th>Actions</th>
+        <th><i class="fa-regular fa-clock"></i></th>
+    </tr>
+    @foreach (var song in Model.Songs)
+    {
+        <tr draggable="true" class="song-row" id="song-@song.Id" data-duration="@song.Duration">
+            <td>@song.OrderIndex</td>
+            <td>@song.Title</td>
+            <td>@song.ArtistName</td>
+            <td>
+                <button class="like-button" onclick="likeItem('song', @song.Id)">
+                    <i class="@(song.IsLiked ? "fa-solid" : "fa-regular") fa-heart"></i>
+                </button>
+                <button class="play-button" onclick="playSong('@song.Id', '@song.Duration')">
+                    <i class="fa-solid fa-play"></i>
+                </button>
+            </td>
+            <td>@string.Format("{0:D2}:{1:D2}", song.Duration / 60, song.Duration % 60)</td>
+        </tr>
+    }
+</table>

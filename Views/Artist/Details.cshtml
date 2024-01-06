@@ -1,0 +1,47 @@
+﻿@model MusicApp_AdamKoen.ViewModels.ArtistViewModel
+
+@{
+    ViewData["Title"] = "Artist Details";
+}
+
+<h2>@Model.Name</h2>
+<button id="like-artist-@Model.Id" class="like-button" onclick="likeArtist(@Model.Id)">
+    <i class="@(Model.IsLiked ? "fa-solid" : "fa-regular") fa-heart"></i>
+</button>
+<p>Total Songs: @Model.TotalSongs</p>
+<p>Total Duration: @TimeSpan.FromSeconds(Model.TotalDuration).ToString(@"hh\:mm\:ss")</p>
+<h3>Songs:</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Play</th>
+            <th><i class="fa-regular fa-clock"></i></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var song in Model.Songs)
+        {
+            <tr>
+                <td>@song.Title - @song.ArtistName</td>
+                <td>
+                    <button class="play-button" onclick="playSong('@song.Id', '@song.Duration')">
+                        <i class="fa-solid fa-play"></i>
+                    </button>
+                </td>
+                <td>
+                    @string.Format("{0:D2}:{1:D2}", song.Duration / 60, song.Duration % 60)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div id="playbackBar">
+    <div class="playback-info">
+        Now Playing: <span id="playingSong"></span>
+        <button onclick="skipSong()">Skip</button>
+    </div>
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+

@@ -40,8 +40,10 @@ namespace MusicApp_AdamKoen.Controllers
                         ReleaseDate = ps.Song.ReleaseDate,
                         Duration = ps.Song.Duration,
                         Playlists = ps.Song.Playlists.Select(pl => pl.Playlist.Name).ToList(),
-                        OrderIndex = ps.OrderIndex
-                    }).OrderBy(s => s.OrderIndex).ToList()
+                        OrderIndex = ps.OrderIndex,
+                    }).OrderBy(s => s.OrderIndex).ToList(),
+                    TotalSongs = p.Songs.Count,
+                    TotalDuration = p.Songs.Sum(ps => ps.Song.Duration)
                 }).ToListAsync();
 
             var viewModel = new IndexViewModel
@@ -112,13 +114,16 @@ namespace MusicApp_AdamKoen.Controllers
                     {
                         Id = ps.Song.Id,
                         Title = ps.Song.Title,
+                        ArtistId = ps.Song.ArtistId,
                         ArtistName = ps.Song.Artist.Name,
                         Genre = ps.Song.Genre,
                         ReleaseDate = ps.Song.ReleaseDate,
                         Duration = ps.Song.Duration,
                         Playlists = ps.Song.Playlists.Select(pl => pl.Playlist.Name).ToList(),
                         OrderIndex = ps.OrderIndex
-                    }).OrderBy(s => s.OrderIndex).ToList()
+                    }).OrderBy(s => s.OrderIndex).ToList(),
+                    TotalSongs = p.Songs.Count,
+                    TotalDuration = p.Songs.Sum(ps => ps.Song.Duration)
                 }).FirstOrDefaultAsync();
            
             if (playlist == null)
@@ -132,6 +137,19 @@ namespace MusicApp_AdamKoen.Controllers
 
             playlist.OtherPlaylists = otherPlaylists;
             ViewBag.Songs = new SelectList(await _db.Songs.ToListAsync(), "Id", "Title");
+
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            var hasLikedPlaylist = await _db.Likes.AnyAsync(l => l.UserId == currentUserId && l.PlaylistId == id);
+            playlist.IsLiked = hasLikedPlaylist;
+
+            
+            var likedSongIds = await _db.Likes
+                                .Where(l => l.UserId == currentUserId && l.SongId != null)
+                                .Select(l => l.SongId.Value)
+                                .ToListAsync();
+
+            playlist.Songs.ForEach(s => s.IsLiked = likedSongIds.Contains(s.Id));
             return View(playlist);
         }
         [Authorize]
@@ -159,6 +177,7 @@ namespace MusicApp_AdamKoen.Controllers
                     OrderIndex = ps.OrderIndex
                 }).OrderBy(s => s.OrderIndex).ToList()
             }).ToListAsync();
+
             var viewModel = new IndexViewModel
             {
                 MyPlaylists = myPlaylists
@@ -246,7 +265,6 @@ namespace MusicApp_AdamKoen.Controllers
             await _db.SaveChangesAsync();
             return Json(new { success = true });
         }
-        [HttpPost]
         [HttpPost]
         public async Task<IActionResult> AddPlaylistToPlaylist(int targetPlaylistId, int sourcePlaylistId)
         {

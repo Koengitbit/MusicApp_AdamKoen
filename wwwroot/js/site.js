@@ -178,18 +178,25 @@ function shuffleArray(array) {
 }
 // Like
 function likeItem(type, itemId) {
+    let headers = {
+        'Content-Type': 'application/json'
+    };
+    const tokenElement = document.querySelector('[name=__RequestVerificationToken]');
+    if (tokenElement) {
+        headers['RequestVerificationToken'] = tokenElement.value;
+    }
+
     fetch('/Playlist/Like', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'RequestVerificationToken': document.querySelector('[name=__RequestVerificationToken]').value
-        },
+        headers: headers,
         body: JSON.stringify({ type, itemId })
     })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 console.log(type + ' liked successfully');
+                console.log("Type:", type, "Item ID:", itemId, "data liked:", data.liked);
+
                 updateLikeButton(type, itemId, data.liked);
             }
             
@@ -198,18 +205,152 @@ function likeItem(type, itemId) {
 }
 
 function updateLikeButton(type, itemId, isLiked) {
-    const likeButtonSelector = `#${type}-${itemId} .like-button i`;
+    let iconId;
+    if (type === 'playlist') {
+        iconId = `like-playlist-${itemId}`;
+        const likeIcon = document.getElementById(iconId);
+        if (likeIcon) {
+            if (isLiked) {
+                likeIcon.classList.remove('fa-regular');
+                likeIcon.classList.add('fa-solid');
+            } else {
+                likeIcon.classList.remove('fa-solid');
+                likeIcon.classList.add('fa-regular');
+            }
+        }
+    }
+    else {
+        const likeButtonSelector = `#${type}-${itemId} .like-button i`;
 
-    const likeButton = document.querySelector(likeButtonSelector);
-    if (likeButton) {
-        if (isLiked) {
-            likeButton.classList.remove('fa-regular');
-            likeButton.classList.add('fa-solid');
-        } else {
-            likeButton.classList.remove('fa-solid');
-            likeButton.classList.add('fa-regular');
+        const likeButton = document.querySelector(likeButtonSelector);
+        if (likeButton) {
+            if (isLiked) {
+                likeButton.classList.remove('fa-regular');
+                likeButton.classList.add('fa-solid');
+            } else {
+                likeButton.classList.remove('fa-solid');
+                likeButton.classList.add('fa-regular');
+            }
         }
     }
 }
+function likePlaylist(playlistId) {
+    let headers = {
+        'Content-Type': 'application/json'
+    };
+    const tokenElement = document.querySelector('[name=__RequestVerificationToken]');
+    if (tokenElement) {
+        headers['RequestVerificationToken'] = tokenElement.value;
+    }
+
+    fetch('/Playlist/Like', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ type: 'playlist', itemId: playlistId })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Playlist liked successfully');
+                console.log("Playlist ID:", playlistId, "data liked:", data.liked);
+                updatePlaylistLikeIcon(playlistId, data.liked);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function updatePlaylistLikeIcon(playlistId, isLiked) {
+    const likeIconId = `like-playlist-${playlistId}`;
+    const likeIcon = document.getElementById(likeIconId);
+    if (likeIcon) {
+        if (isLiked) {
+            likeIcon.classList.remove('fa-regular');
+            likeIcon.classList.add('fa-solid');
+        } else {
+            likeIcon.classList.remove('fa-solid');
+            likeIcon.classList.add('fa-regular');
+        }
+    }
+}
+function likeArtist(artistId) {
+    let headers = {
+        'Content-Type': 'application/json'
+    };
+    const tokenElement = document.querySelector('[name=__RequestVerificationToken]');
+    if (tokenElement) {
+        headers['RequestVerificationToken'] = tokenElement.value;
+    }
+
+    fetch('/Artist/Like', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ type: 'artist', itemId: artistId })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Artist liked successfully');
+                console.log("Artist ID:", artistId, "data liked:", data.liked);
+                updateArtistLikeIcon(artistId, data.liked);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function updateArtistLikeIcon(artistId, isLiked) {
+    const likeIconId = `like-artist-${artistId}`;
+    const likeIcon = document.getElementById(likeIconId).querySelector('i'); 
+    if (likeIcon) {
+        if (isLiked) {
+            likeIcon.classList.remove('fa-regular');
+            likeIcon.classList.add('fa-solid');
+        } else {
+            likeIcon.classList.remove('fa-solid');
+            likeIcon.classList.add('fa-regular');
+        }
+    }
+}
+function likeAlbum(albumId) {
+    let headers = {
+        'Content-Type': 'application/json'
+    };
+    const tokenElement = document.querySelector('[name=__RequestVerificationToken]');
+    if (tokenElement) {
+        headers['RequestVerificationToken'] = tokenElement.value;
+    }
+
+    fetch('/Album/Like', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ type: 'album', itemId: albumId })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Album liked successfully');
+                console.log("Album ID:", albumId, "data liked:", data.liked);
+                updateAlbumLikeIcon(albumId, data.liked);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function updateAlbumLikeIcon(albumId, isLiked) {
+    const likeIconId = `like-album-${albumId}-icon`;
+    const likeIcon = document.getElementById(likeIconId);
+    if (likeIcon) {
+        if (isLiked) {
+            likeIcon.classList.remove('fa-regular');
+            likeIcon.classList.add('fa-solid');
+        } else {
+            likeIcon.classList.remove('fa-solid');
+            likeIcon.classList.add('fa-regular');
+        }
+    }
+}
+
+
+
+
 
 

@@ -2,7 +2,7 @@
 
 <h2>Albums</h2>
 
-<table>
+<table class="table">
     <thead>
         <tr>
             <th>Title</th>
@@ -13,7 +13,11 @@
         @foreach (var album in Model)
         {
             <tr>
-                <td>@album.Title</td>
+                <td>
+                    <a asp-action="Details" asp-controller="Album" asp-route-id="@album.Id">
+                        @album.Title
+                    </a>
+                </td>
                 <td>@album.ReleaseYear.ToShortDateString()</td>
             </tr>
         }

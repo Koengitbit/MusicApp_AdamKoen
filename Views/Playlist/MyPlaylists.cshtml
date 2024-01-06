@@ -1,45 +1,22 @@
 ﻿@model MusicApp_AdamKoen.ViewModels.IndexViewModel
 
 <h1>My Playlists</h1>
+<table class="table">
+    <tr>
+        <th>Name</th>
+        <th>Public</th>
+        <th>Created At</th>
+    </tr>
 @foreach (var playlist in Model.MyPlaylists)
 {
-            <table class="table">
-            <tr>
-                <th>Name</th>
-                <th>Created At</th>
-                <th>Public</th>
-                <th>UserId</th>
-            </tr>
-        
+        <tr>
             <td>
                 <a asp-action="Details" asp-controller="Playlist" asp-route-id="@playlist.Id">
                     @playlist.Name
                 </a>
             </td>
-        <td>@playlist.CreatedAt.ToShortDateString()</td>
-        <td>@(playlist.IsPublic ? "Yes" : "No")</td>
-        <td>@playlist.UserId</td>
-        </table>
-
-
-        <h4>Songs</h4>
-        <table class="table">
-            <tr>
-                <th>Title</th>
-                <th>Artist</th>
-                <th>Genre</th>
-                <th>Release Date</th>
-                <th>Duration</th>
-            </tr>
-            @foreach (var song in playlist.Songs)
-            {
-                <tr>
-                    <td>@song.Title</td>
-                    <td>@song.ArtistName</td>
-                    <td>@song.Genre</td>
-                    <td>@song.ReleaseDate.ToShortDateString()</td>
-                    <td>@song.Duration</td
-                </tr>
-            }
-        </table>
-}
+            <td>@(playlist.IsPublic ? "Yes" : "No")</td>
+            <td>@playlist.CreatedAt.ToShortDateString()</td>
+        </tr>
+    }
+</table>

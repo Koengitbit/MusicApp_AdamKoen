@@ -68,6 +68,8 @@ public class AlbumController : Controller
         {
             return NotFound();
         }
+        var hasLikedAlbum = await _db.Likes.AnyAsync(l => l.UserId == currentUserId && l.AlbumId == id);
+        album.IsLiked = hasLikedAlbum;
 
         var likedSongIds = await _db.Likes
                             .Where(l => l.UserId == currentUserId && l.SongId != null)

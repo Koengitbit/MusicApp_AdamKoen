@@ -17,6 +17,7 @@ namespace MusicApp_AdamKoen.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var artist = await _db.Artists
                 .Where(a => a.Id == id)
                 .Select(a => new ArtistViewModel
@@ -39,6 +40,8 @@ namespace MusicApp_AdamKoen.Controllers
             {
                 return NotFound();
             }
+            var hasLikedArtist = await _db.Likes.AnyAsync(l => l.UserId == currentUserId && l.ArtistId == id);
+            artist.IsLiked = hasLikedArtist;
 
             artist.TotalSongs = artist.Songs.Count;
             artist.TotalDuration = artist.Songs.Sum(s => s.Duration);

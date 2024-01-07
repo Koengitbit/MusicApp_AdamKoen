@@ -40,6 +40,9 @@ function startPlaying(songId, duration) {
 
         var progressPercentage = (currentTime / duration) * 100;
         progressBar.style.width = progressPercentage + '%';
+        //update playback state
+        savePlaybackState(songId, currentTime, duration);
+
         // Stop the timer
         if (currentTime >= duration) {
             clearInterval(currentTimer);
@@ -55,7 +58,12 @@ function playNextSong() {
         var nextSong = songQueue.shift(); // Remove the first song from the queue
         startPlaying(nextSong.songId, nextSong.duration);
     }
+    else {
+        // Queue is empty, clear the playback state
+        localStorage.removeItem('playbackState');
+    }
 }
+
 function addToQueue(songId, duration) {
     songQueue.push({ songId, duration });
 }
@@ -348,9 +356,129 @@ function updateAlbumLikeIcon(albumId, isLiked) {
         }
     }
 }
+function playAlbum(startingSongId, duration) {
+    // Clear the current queue and timer
+    songQueue = [];
+    if (currentTimer) {
+        clearInterval(currentTimer);
+        currentTimer = null;
+    }
+
+    // Start playing the selected song
+    startPlaying(startingSongId, duration);
+
+    // Queue the rest of the album starting from the selected song
+    let startQueueing = false;
+    document.querySelectorAll('#songsTable .song-row').forEach(row => {
+        const songId = row.id.split('-')[1];
+        const songDuration = row.getAttribute('data-duration');
+
+        if (songId === startingSongId) {
+            startQueueing = true;
+        } else if (startQueueing) {
+            songQueue.push({ songId, duration: songDuration });
+        }
+    });
+}
+
+function savePlaybackState(songId, currentTime, duration) {
+    const playbackState = {
+        songId: songId,
+        currentTime: currentTime,
+        duration: duration,
+        songQueue: songQueue // Save the entire song queue
+    };
+    localStorage.setItem('playbackState', JSON.stringify(playbackState));
+}
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const savedState = localStorage.getItem('playbackState');
+    if (savedState) {
+        const playbackState = JSON.parse(savedState);
+        songQueue = playbackState.songQueue || []; // Restore the song queue
+        if (playbackState.songId) {
+            startPlayingFromSpecificTime(playbackState.songId, playbackState.duration, playbackState.currentTime);
+        }
+    }
+});
 
 
 
+function playSongFromSpecificTime(songId, duration, startTime) {
+    if (currentTimer) {
+        // If a song is already playing, add this song to the queue with the specific start time
+        songQueue.push({ songId, duration, startTime });
+    } else {
+        // No song is currently playing, so start this song from the specific start time
+        startPlayingFromSpecificTime(songId, duration, startTime);
+    }
+}
+
+function startPlayingFromSpecificTime(songId, duration, startTime) {
+    var currentTime = startTime || 0; // If startTime is undefined, default to 0
+    var formattedDuration = formatDuration(duration);
+    var formattedCurrentTime = formatDuration(currentTime);
+
+    var playbackInfo = 'ID: ' + songId + ', Duration: ' + formattedCurrentTime + '/' + formattedDuration;
+    document.getElementById('playingSong').innerText = playbackInfo;
+    document.getElementById('playbackBar').style.display = 'block';
+
+    var progressBar = document.getElementById('progressBar');
+    progressBar.style.width = (currentTime / duration) * 100 + '%';
+
+    // Start or restart the timer
+    currentTimer = setInterval(function () {
+        currentTime++;
+        var formattedCurrentTime = formatDuration(currentTime);
+        document.getElementById('playingSong').innerText =
+            'ID: ' + songId + ', Duration: ' + formattedCurrentTime + '/' + formattedDuration;
+
+        var progressPercentage = (currentTime / duration) * 100;
+        progressBar.style.width = progressPercentage + '%';
+
+        // Stop the timer if the song has finished
+        if (currentTime >= duration) {
+            clearInterval(currentTimer);
+            progressBar.style.width = '100%';
+            playNextSong();
+        }
+
+        savePlaybackState(songId, currentTime, duration);
+    }, 1000); // Update every second
+}
+function saveUserPreference(shouldNotMaintainQueue) {
+    localStorage.setItem('shouldNotMaintainQueue', shouldNotMaintainQueue);
+}
+function handleQueuePreferenceChange(isChecked) {
+    saveUserPreference(isChecked);
+}
+
+window.addEventListener('beforeunload', function () {
+    localStorage.setItem('appClosing', 'true');
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Set the 'appOpened' flag in session storage
+    sessionStorage.setItem('appOpened', 'true');
+
+    // Check if the app was previously in a closing state
+    const appClosing = localStorage.getItem('appClosing');
+    const shouldNotMaintainQueue = localStorage.getItem('shouldNotMaintainQueue') === 'true';
+
+    if (appClosing && shouldNotMaintainQueue) {
+        // App was closing and user chose not to maintain the queue
+        localStorage.removeItem('playbackState');
+    }
+
+    // Clear the 'appClosing' flag as we are now opening/reloading the app
+    localStorage.removeItem('appClosing');
+
+    // Restore the state of the checkbox based on user preference
+    document.getElementById('shouldNotMaintainQueue').checked = shouldNotMaintainQueue;
+
+    // ...rest of your DOMContentLoaded code...
+});
 
 
-
+                

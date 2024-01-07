@@ -22,7 +22,6 @@
 <h3>Songs</h3>
 <table class="table" id="songsTable">
     <tr>
-        <th>#</th>
         <th>Title</th>
         <th>Artist</th>
         <th>Actions</th>
@@ -31,14 +30,13 @@
     @foreach (var song in Model.Songs)
     {
         <tr draggable="true" class="song-row" id="song-@song.Id" data-duration="@song.Duration">
-            <td>@song.OrderIndex</td>
             <td>@song.Title</td>
             <td>@song.ArtistName</td>
             <td>
                 <button class="like-button" onclick="likeItem('song', @song.Id)">
                     <i class="@(song.IsLiked ? "fa-solid" : "fa-regular") fa-heart"></i>
                 </button>
-                <button class="play-button" onclick="playSong('@song.Id', '@song.Duration')">
+                <button class="play-button" onclick="playAlbum('@song.Id', '@song.Duration')">
                     <i class="fa-solid fa-play"></i>
                 </button>
             </td>

@@ -2,5 +2,15 @@
     ViewData["Title"] = "Privacy Policy";
 }
 <h1>@ViewData["Title"]</h1>
-
+<div id="playbackBar">
+    <div class="playback-info">
+        Now Playing: <span id="playingSong"></span>
+        <button onclick="skipSong()">Skip</button>
+    </div>
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+<label>
+    <input type="checkbox" id="shouldNotMaintainQueue" onchange="handleQueuePreferenceChange(this.checked)">
+    I want to lose the song queue between closing and opening the appliciation.
+</label>
 <p>Use this page to detail your site's privacy policy.</p>

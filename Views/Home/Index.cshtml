@@ -1,6 +1,13 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+<div id="playbackBar">
+    <div class="playback-info">
+        Now Playing: <span id="playingSong"></span>
+        <button onclick="skipSong()">Skip</button>
+    </div>
+    <div class="progress-bar" id="progressBar"></div>
+</div>
 
 <div class="text-center">
     <h1 class="display-4">Welcome To Spotify</h1> 

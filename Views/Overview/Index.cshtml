@@ -45,8 +45,10 @@
                     </ul>
                 </td>
                 <td>
-                    <button onclick="playSong('@song.Id', '@song.Duration')">Play</button>
-                    <button onclick="addToQueue('@song.Id', '@song.Duration')">Add to Queue</button>
+                    <button class="like-button" onclick="likeItem('song', @song.Id)">
+                        <i class="@(song.IsLiked ? "fa-solid" : "fa-regular") fa-heart"></i>
+                    </button>
+                    <button class="play-button" onclick="playSong('@song.Id', '@song.Duration')"><i class="fa-solid fa-play"></i></button>
                 </td>
 
             </tr>

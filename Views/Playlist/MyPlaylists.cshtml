@@ -1,4 +1,11 @@
 ﻿@model MusicApp_AdamKoen.ViewModels.IndexViewModel
+<div id="playbackBar">
+    <div class="playback-info">
+        Now Playing: <span id="playingSong"></span>
+        <button onclick="skipSong()">Skip</button>
+    </div>
+    <div class="progress-bar" id="progressBar"></div>
+</div>
 
 <h1>My Playlists</h1>
 <table class="table">

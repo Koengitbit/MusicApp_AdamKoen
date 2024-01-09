@@ -13,13 +13,25 @@
     </div>
     <div class="progress-bar" id="progressBar"></div>
 </div>
+
 <h2>@Model.Name Playlist</h2>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-1">
 <button id="playlist-@Model.Id" class="like-button" onclick="likePlaylist(@Model.Id)">
     <i id="like-playlist-@Model.Id" class="@(Model.IsLiked ? "fa-solid" : "fa-regular") fa-heart"></i>
 </button>
-<p>Created At: @Model.CreatedAt.ToShortDateString()</p>
-<p>Public: @(Model.IsPublic ? "Yes" : "No")</p>
-
+        </div>
+        <div class="col-2">
+            Created At: @Model.CreatedAt.ToShortDateString()
+        </div>
+        <div class="col-2">
+            Playlist is @(Model.IsPublic ? "public" : "not public")
+        </div>
+    </div>
+</div>
 
 
 
@@ -30,15 +42,25 @@
         @TempData["ErrorMessage"]
     </div>
 }
+
+    
 @if (Model.UserId.ToString() == currentUserId)
 {
-    <p> Add Song or Playlist </p>
+    <div class="container">
+        <div class="row">
+            
     <form asp-action="AddSongToPlaylist" method="post">
+                Add Song or Playlist:
         <input type="hidden" name="playlistId" value="@Model.Id" />
+                
+                
         <select asp-for="SelectedSongId" asp-items="ViewBag.Songs"></select>
+                
         <button class="minus-button" type="submit"><i class="fa-solid fa-plus"></i></button>
+                
     </form>
-
+        </div>
+    </div>
 
    
 

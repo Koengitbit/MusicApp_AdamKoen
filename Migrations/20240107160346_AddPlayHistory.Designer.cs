@@ -12,8 +12,8 @@ using MusicApp_AdamKoen.DAL;
 namespace MusicAppAdamKoen.Migrations
 {
     [DbContext(typeof(SpotifyDbContext))]
-    [Migration("20240105000505_AddLikes")]
-    partial class AddLikes
+    [Migration("20240107160346_AddPlayHistory")]
+    partial class AddPlayHistory
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -192,6 +192,28 @@ namespace MusicAppAdamKoen.Migrations
                             Id = 2,
                             Name = "2Pac"
                         });
+                });
+
+            modelBuilder.Entity("MusicApp_AdamKoen.Models.PlayHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("PlayedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SongId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PlayHistory");
                 });
 
             modelBuilder.Entity("MusicApp_AdamKoen.Models.Playlist", b =>

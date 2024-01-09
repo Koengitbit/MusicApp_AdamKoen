@@ -159,6 +159,72 @@ namespace MusicAppAdamKoen.Migrations
                             AlbumId = 1,
                             SongId = 9,
                             OrderIndex = 7
+                        },
+                        new
+                        {
+                            AlbumId = 2,
+                            SongId = 10,
+                            OrderIndex = 0
+                        },
+                        new
+                        {
+                            AlbumId = 2,
+                            SongId = 11,
+                            OrderIndex = 1
+                        },
+                        new
+                        {
+                            AlbumId = 2,
+                            SongId = 12,
+                            OrderIndex = 2
+                        },
+                        new
+                        {
+                            AlbumId = 2,
+                            SongId = 13,
+                            OrderIndex = 3
+                        },
+                        new
+                        {
+                            AlbumId = 2,
+                            SongId = 14,
+                            OrderIndex = 4
+                        },
+                        new
+                        {
+                            AlbumId = 2,
+                            SongId = 15,
+                            OrderIndex = 5
+                        },
+                        new
+                        {
+                            AlbumId = 2,
+                            SongId = 16,
+                            OrderIndex = 6
+                        },
+                        new
+                        {
+                            AlbumId = 2,
+                            SongId = 17,
+                            OrderIndex = 7
+                        },
+                        new
+                        {
+                            AlbumId = 2,
+                            SongId = 18,
+                            OrderIndex = 8
+                        },
+                        new
+                        {
+                            AlbumId = 2,
+                            SongId = 19,
+                            OrderIndex = 9
+                        },
+                        new
+                        {
+                            AlbumId = 2,
+                            SongId = 2,
+                            OrderIndex = 10
                         });
                 });
 
@@ -189,6 +255,28 @@ namespace MusicAppAdamKoen.Migrations
                             Id = 2,
                             Name = "2Pac"
                         });
+                });
+
+            modelBuilder.Entity("MusicApp_AdamKoen.Models.PlayHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("PlayedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SongId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PlayHistory");
                 });
 
             modelBuilder.Entity("MusicApp_AdamKoen.Models.Playlist", b =>
@@ -224,7 +312,7 @@ namespace MusicAppAdamKoen.Migrations
                             Id = 1,
                             CreatedAt = new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsPublic = true,
-                            Name = "Playlist One",
+                            Name = "Playlist 1",
                             UserId = 1
                         },
                         new
@@ -232,7 +320,7 @@ namespace MusicAppAdamKoen.Migrations
                             Id = 2,
                             CreatedAt = new DateTime(2022, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsPublic = false,
-                            Name = "Playlist Two",
+                            Name = "Playlist 2",
                             UserId = 1
                         });
                 });
@@ -381,6 +469,96 @@ namespace MusicAppAdamKoen.Migrations
                             Genre = "Pop",
                             ReleaseDate = new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Title = "P.Y.T (Pretty Young Thing)"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            ArtistId = 2,
+                            Duration = 278,
+                            Genre = "Hip Hop",
+                            ReleaseDate = new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Ambitionz Az A Ridah"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            ArtistId = 2,
+                            Duration = 276,
+                            Genre = "Hip Hop",
+                            ReleaseDate = new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "All About U"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            ArtistId = 2,
+                            Duration = 248,
+                            Genre = "Hip Hop",
+                            ReleaseDate = new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Skandalouz"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            ArtistId = 2,
+                            Duration = 312,
+                            Genre = "Hip Hop",
+                            ReleaseDate = new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Got My Mind Made Up"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            ArtistId = 2,
+                            Duration = 285,
+                            Genre = "Hip Hop",
+                            ReleaseDate = new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "How Do U Want It"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            ArtistId = 2,
+                            Duration = 246,
+                            Genre = "Hip Hop",
+                            ReleaseDate = new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "2 Of Amerikaz Most Wanted"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            ArtistId = 2,
+                            Duration = 374,
+                            Genre = "Hip Hop",
+                            ReleaseDate = new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "No More Pain"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            ArtistId = 2,
+                            Duration = 283,
+                            Genre = "Hip Hop",
+                            ReleaseDate = new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Life Goes On"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            ArtistId = 2,
+                            Duration = 314,
+                            Genre = "Hip Hop",
+                            ReleaseDate = new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Only God Can Judge Me"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            ArtistId = 2,
+                            Duration = 314,
+                            Genre = "Hip Hop",
+                            ReleaseDate = new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Tradin' War Stories"
                         });
                 });
 

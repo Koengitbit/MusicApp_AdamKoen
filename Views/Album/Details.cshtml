@@ -18,7 +18,7 @@
 <button id="like-album-@Model.Id" class="like-button" onclick="likeAlbum(@Model.Id)">
     <i id="like-album-@Model.Id-icon" class="@(Model.IsLiked ? "fa-solid" : "fa-regular") fa-heart"></i>
 </button>
-
+<button class="play-button" onclick="playAllSongsShuffled()"><i class="fa-solid fa-shuffle"></i></button>
 <h3>Songs</h3>
 <table class="table" id="songsTable">
     <tr>

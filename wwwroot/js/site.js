@@ -42,7 +42,7 @@ function startPlaying(songId, duration) {
         progressBar.style.width = progressPercentage + '%';
         //update playback state
         savePlaybackState(songId, currentTime, duration);
-
+        
         // Stop the timer
         if (currentTime >= duration) {
             clearInterval(currentTimer);
@@ -78,6 +78,7 @@ function skipSong() {
             document.getElementById('playbackBar').style.display = 'none';
             currentTimer = null;
             document.getElementById('playingSong').innerText = '';
+            localStorage.removeItem('playbackState');
         }
     }
 }
@@ -476,9 +477,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Restore the state of the checkbox based on user preference
     document.getElementById('shouldNotMaintainQueue').checked = shouldNotMaintainQueue;
-
-    // ...rest of your DOMContentLoaded code...
 });
-
-
-                

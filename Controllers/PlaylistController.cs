@@ -368,6 +368,87 @@ namespace MusicApp_AdamKoen.Controllers
                     return Json(new { success = false, message = "Invalid like type." });
             }
         }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> CreatePlaylistFromLikesAndHistory()
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            // Fetch liked songs
+            var likedSongIds = await _db.Likes
+                                        .Where(l => l.UserId == userId && l.SongId != null)
+                                        .Select(l => l.SongId.Value)
+                                        .Distinct() // Ensure uniqueness
+                                        .ToListAsync();
+
+            // Fetch songs from play history
+            var playedSongIds = await _db.PlayHistory
+                                         .Where(ph => ph.UserId == userId)
+                                         .OrderByDescending(ph => ph.PlayedAt)
+                                         .Select(ph => ph.SongId)
+                                         .Distinct() // Ensure uniqueness
+                                         .ToListAsync();
+
+            // Combine liked songs and played songs
+            var combinedSongIds = likedSongIds.Union(playedSongIds).ToList();
+
+            if (combinedSongIds.Count == 0)
+            {
+                TempData["ErrorMessage"] = "No songs found in likes or play history to create a playlist.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Create a new playlist
+            var newPlaylist = new Playlist
+            {
+                Name = "My Favorites and History",
+                IsPublic = false, 
+                CreatedAt = DateTime.Now,
+                UserId = userId,
+                Songs = new List<PlaylistSong>()
+            };
+
+            // Add songs to the new playlist
+            foreach (var songId in combinedSongIds)
+            {
+                newPlaylist.Songs.Add(new PlaylistSong { SongId = songId });
+            }
+
+            _db.Playlists.Add(newPlaylist);
+            await _db.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Playlist created successfully from liked songs and play history.";
+            return RedirectToAction(nameof(MyPlaylists)); // Redirect to user's playlist page
+        }
+        private async Task CreateOrUpdatePlaylist(int userId)
+        {
+            // Fetch the latest playlist or create a new one
+            var playlist = await _db.Playlists
+                                    .OrderByDescending(p => p.CreatedAt)
+                                    .FirstOrDefaultAsync(p => p.UserId == userId && p.Name == "My Favorites and History");
+
+            if (playlist == null)
+            {
+                playlist = new Playlist
+                {
+                    Name = "My Favorites and History",
+                    IsPublic = true, 
+                    CreatedAt = DateTime.Now,
+                    UserId = userId,
+                    Songs = new List<PlaylistSong>()
+                };
+                _db.Playlists.Add(playlist);
+            }
+            else
+            {
+                playlist.CreatedAt = DateTime.Now; // Update the timestamp
+                playlist.Songs.Clear(); // Clear existing songs
+            }
+
+            // Add liked songs and played songs logic (similar to the existing method)
+
+            await _db.SaveChangesAsync();
+        }
 
 
 

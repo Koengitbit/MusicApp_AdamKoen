@@ -85,7 +85,10 @@ function skipSong() {
 //Drag and reorder functionality
 document.addEventListener('DOMContentLoaded', (event) => {
     const table = document.getElementById('songsTable');
-
+    //If on a page where there's no songTable it would give an error this makes it return nothing so there's no error.
+    if (!table) {
+        return;
+    }
     let draggedItem = null;
 
     table.addEventListener('dragstart', (e) => {
@@ -354,5 +357,8 @@ document.addEventListener('DOMContentLoaded', function () {
     localStorage.removeItem('appClosing');
 
     // Restore the state of the checkbox based on user preference
-    document.getElementById('shouldNotMaintainQueue').checked = shouldNotMaintainQueue;
+    var shouldNotMaintainQueueCheckbox = document.getElementById('shouldNotMaintainQueue');
+    if (shouldNotMaintainQueueCheckbox) {
+        shouldNotMaintainQueueCheckbox.checked = shouldNotMaintainQueue;
+    }
 });

@@ -70,7 +70,7 @@ namespace MusicApp_AdamKoen.Controllers
                 playlist = new Playlist
                 {
                     Name = "My Favorites and History",
-                    IsPublic = true, // Change based on your requirements
+                    IsPublic = true, 
                     CreatedAt = DateTime.Now,
                     UserId = userId,
                     Songs = new List<PlaylistSong>()
@@ -79,7 +79,7 @@ namespace MusicApp_AdamKoen.Controllers
             }
             else
             {
-                playlist.CreatedAt = DateTime.Now; // Update the timestamp
+                playlist.CreatedAt = DateTime.Now; 
                 playlist.Songs.Clear(); // Clear existing songs
             }
 

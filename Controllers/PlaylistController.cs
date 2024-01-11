@@ -97,9 +97,6 @@ namespace MusicApp_AdamKoen.Controllers
         [Authorize]
         public async Task<IActionResult> Details(int id)
         {
-
-
-            
             var playlist = await _db.Playlists
 
                 .Where(p => p.Id == id)
@@ -150,6 +147,8 @@ namespace MusicApp_AdamKoen.Controllers
                                 .ToListAsync();
 
             playlist.Songs.ForEach(s => s.IsLiked = likedSongIds.Contains(s.Id));
+
+
             return View(playlist);
         }
         [Authorize]

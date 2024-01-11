@@ -12,20 +12,20 @@ function formatDuration(seconds) {
 var songQueue = [];
 var currentTimer = null;
 //Code to play song in overview currently
-function playSong(songId, duration) {
+function playSong(songId, songTitle, duration) {
     if (currentTimer) {
-        // add song to queue if song alr playing
-        songQueue.push({ songId, duration });
+        // add song to queue if song already playing
+        songQueue.push({ songId, songTitle, duration });
     }
     else {
-        // no song currently playing, so play song insta
-        startPlaying(songId, duration);
+        // no song currently playing, so play song instantly
+        startPlaying(songId, songTitle, duration);
     }
 }
-function startPlaying(songId, duration) {
+function startPlaying(songId,songTitle, duration) {
     var currentTime = 0;
     var formattedDuration = formatDuration(duration);
-    var playbackInfo = 'ID: ' + songId + ', Duration: ' + currentTime + '/' + formattedDuration;
+    var playbackInfo = songTitle + ', Duration: ' + currentTime + '/' + formattedDuration;
     document.getElementById('playingSong').innerText = playbackInfo;
     document.getElementById('playbackBar').style.display = 'block';
 
@@ -36,12 +36,12 @@ function startPlaying(songId, duration) {
         currentTime++;
         var formattedCurrentTime = formatDuration(currentTime);
         document.getElementById('playingSong').innerText =
-            'ID: ' + songId + ', Duration: ' + formattedCurrentTime + '/' + formattedDuration;
+         songTitle  + ', Duration: ' + formattedCurrentTime + '/' + formattedDuration;
 
         var progressPercentage = (currentTime / duration) * 100;
         progressBar.style.width = progressPercentage + '%';
         //update playback state
-        savePlaybackState(songId, currentTime, duration);
+        savePlaybackState(songId, songTitle, currentTime, duration);
         
         // Stop the timer
         if (currentTime >= duration) {
@@ -56,7 +56,7 @@ function startPlaying(songId, duration) {
 function playNextSong() {
     if (songQueue.length > 0) {
         var nextSong = songQueue.shift(); // Remove the first song from the queue
-        startPlaying(nextSong.songId, nextSong.duration);
+        startPlaying(nextSong.songId, nextSong.songTitle, nextSong.duration);
     }
     else {
         // Queue is empty, clear the playback state
@@ -64,8 +64,8 @@ function playNextSong() {
     }
 }
 
-function addToQueue(songId, duration) {
-    songQueue.push({ songId, duration });
+function addToQueue(songId, songTitle, duration) {
+    songQueue.push({ songId, songTitle, duration });
 }
 
 function skipSong() {
@@ -100,9 +100,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     table.addEventListener('drop', (e) => {
         e.preventDefault();
-
+        
         let targetRow = e.target.closest('tr');
-        if (targetRow && draggedItem && targetRow.parentNode === draggedItem.parentNode) {
+        //make sure the dragged item and the target are both song rows
+        if (targetRow && draggedItem && targetRow.matches('.song-row') && draggedItem.matches('.song-row')) {
             swapElements(draggedItem, targetRow);
             updateSongOrder();
         }
@@ -147,14 +148,15 @@ function swapElements(elem1, elem2) {
 function playAllSongs() {
     document.querySelectorAll('#songsTable .song-row').forEach(row => {
         const songId = row.id.split('-')[1];
+        const songTitle = row.getAttribute('title');
         const duration = row.getAttribute('data-duration'); 
-        addToQueue(songId, duration);
+        addToQueue(songId, songTitle ,duration);
     });
 
     // Start playing the first song if no song is currently playing
     if (!currentTimer && songQueue.length > 0) {
         const nextSong = songQueue.shift();
-        startPlaying(nextSong.songId, nextSong.duration);
+        startPlaying(nextSong.songId, nextSong.songTitle, nextSong.duration);
     }
 }
 
@@ -162,6 +164,7 @@ function playAllSongsShuffled() {
     let songs = Array.from(document.querySelectorAll('#songsTable .song-row'))
         .map(row => ({
             songId: row.id.split('-')[1],
+            songTitle: row.getAttribute('title'),
             duration: row.getAttribute('data-duration')
         }));
 
@@ -169,12 +172,12 @@ function playAllSongsShuffled() {
     shuffleArray(songs);
 
     // Add shuffled songs to the queue
-    songs.forEach(song => addToQueue(song.songId, song.duration));
+    songs.forEach(song => addToQueue(song.songId, song.songTitle , song.duration));
 
     // Start playing the first song if no song is currently playing
     if (!currentTimer && songQueue.length > 0) {
         const nextSong = songQueue.shift();
-        startPlaying(nextSong.songId, nextSong.duration);
+        startPlaying(nextSong.songId, nextSong.songTitle, nextSong.duration);
     }
 }
 
@@ -214,25 +217,12 @@ function likeItem(type, itemId) {
 }
 
 function updateLikeButton(type, itemId, isLiked) {
-    let iconId;
-    if (type === 'playlist') {
-        iconId = `like-playlist-${itemId}`;
-        const likeIcon = document.getElementById(iconId);
-        if (likeIcon) {
-            if (isLiked) {
-                likeIcon.classList.remove('fa-regular');
-                likeIcon.classList.add('fa-solid');
-            } else {
-                likeIcon.classList.remove('fa-solid');
-                likeIcon.classList.add('fa-regular');
-            }
-        }
-    }
-    else {
         const likeButtonSelector = `#${type}-${itemId} .like-button i`;
-
+        console.log(likeButtonSelector);
         const likeButton = document.querySelector(likeButtonSelector);
+        console.log(likeButton);
         if (likeButton) {
+            console.log("I got here");
             if (isLiked) {
                 likeButton.classList.remove('fa-regular');
                 likeButton.classList.add('fa-solid');
@@ -241,123 +231,9 @@ function updateLikeButton(type, itemId, isLiked) {
                 likeButton.classList.add('fa-regular');
             }
         }
-    }
-}
-function likePlaylist(playlistId) {
-    let headers = {
-        'Content-Type': 'application/json'
-    };
-    const tokenElement = document.querySelector('[name=__RequestVerificationToken]');
-    if (tokenElement) {
-        headers['RequestVerificationToken'] = tokenElement.value;
-    }
-
-    fetch('/Playlist/Like', {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({ type: 'playlist', itemId: playlistId })
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                console.log('Playlist liked successfully');
-                console.log("Playlist ID:", playlistId, "data liked:", data.liked);
-                updatePlaylistLikeIcon(playlistId, data.liked);
-            }
-        })
-        .catch(error => console.error('Error:', error));
 }
 
-function updatePlaylistLikeIcon(playlistId, isLiked) {
-    const likeIconId = `like-playlist-${playlistId}`;
-    const likeIcon = document.getElementById(likeIconId);
-    if (likeIcon) {
-        if (isLiked) {
-            likeIcon.classList.remove('fa-regular');
-            likeIcon.classList.add('fa-solid');
-        } else {
-            likeIcon.classList.remove('fa-solid');
-            likeIcon.classList.add('fa-regular');
-        }
-    }
-}
-function likeArtist(artistId) {
-    let headers = {
-        'Content-Type': 'application/json'
-    };
-    const tokenElement = document.querySelector('[name=__RequestVerificationToken]');
-    if (tokenElement) {
-        headers['RequestVerificationToken'] = tokenElement.value;
-    }
-
-    fetch('/Artist/Like', {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({ type: 'artist', itemId: artistId })
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                console.log('Artist liked successfully');
-                console.log("Artist ID:", artistId, "data liked:", data.liked);
-                updateArtistLikeIcon(artistId, data.liked);
-            }
-        })
-        .catch(error => console.error('Error:', error));
-}
-
-function updateArtistLikeIcon(artistId, isLiked) {
-    const likeIconId = `like-artist-${artistId}`;
-    const likeIcon = document.getElementById(likeIconId).querySelector('i'); 
-    if (likeIcon) {
-        if (isLiked) {
-            likeIcon.classList.remove('fa-regular');
-            likeIcon.classList.add('fa-solid');
-        } else {
-            likeIcon.classList.remove('fa-solid');
-            likeIcon.classList.add('fa-regular');
-        }
-    }
-}
-function likeAlbum(albumId) {
-    let headers = {
-        'Content-Type': 'application/json'
-    };
-    const tokenElement = document.querySelector('[name=__RequestVerificationToken]');
-    if (tokenElement) {
-        headers['RequestVerificationToken'] = tokenElement.value;
-    }
-
-    fetch('/Album/Like', {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({ type: 'album', itemId: albumId })
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                console.log('Album liked successfully');
-                console.log("Album ID:", albumId, "data liked:", data.liked);
-                updateAlbumLikeIcon(albumId, data.liked);
-            }
-        })
-        .catch(error => console.error('Error:', error));
-}
-
-function updateAlbumLikeIcon(albumId, isLiked) {
-    const likeIconId = `like-album-${albumId}-icon`;
-    const likeIcon = document.getElementById(likeIconId);
-    if (likeIcon) {
-        if (isLiked) {
-            likeIcon.classList.remove('fa-regular');
-            likeIcon.classList.add('fa-solid');
-        } else {
-            likeIcon.classList.remove('fa-solid');
-            likeIcon.classList.add('fa-regular');
-        }
-    }
-}
-function playAlbum(startingSongId, duration) {
+function playAlbum(startingSongId, startingSongTitle, duration) {
     // Clear the current queue and timer
     songQueue = [];
     if (currentTimer) {
@@ -366,25 +242,27 @@ function playAlbum(startingSongId, duration) {
     }
 
     // Start playing the selected song
-    startPlaying(startingSongId, duration);
+    startPlaying(startingSongId, startingSongTitle, duration);
 
     // Queue the rest of the album starting from the selected song
     let startQueueing = false;
     document.querySelectorAll('#songsTable .song-row').forEach(row => {
         const songId = row.id.split('-')[1];
+        const songTitle = row.getAttribute('title');
         const songDuration = row.getAttribute('data-duration');
 
         if (songId === startingSongId) {
             startQueueing = true;
         } else if (startQueueing) {
-            songQueue.push({ songId, duration: songDuration });
+            songQueue.push({ songId, songTitle, duration: songDuration });
         }
     });
 }
 
-function savePlaybackState(songId, currentTime, duration) {
+function savePlaybackState(songId, songTitle,currentTime, duration) {
     const playbackState = {
         songId: songId,
+        songTitle, songTitle,
         currentTime: currentTime,
         duration: duration,
         songQueue: songQueue // Save the entire song queue
@@ -399,29 +277,29 @@ document.addEventListener('DOMContentLoaded', function () {
         const playbackState = JSON.parse(savedState);
         songQueue = playbackState.songQueue || []; // Restore the song queue
         if (playbackState.songId) {
-            startPlayingFromSpecificTime(playbackState.songId, playbackState.duration, playbackState.currentTime);
+            startPlayingFromSpecificTime(playbackState.songId, playbackState.songTitle, playbackState.duration, playbackState.currentTime);
         }
     }
 });
 
 
 
-function playSongFromSpecificTime(songId, duration, startTime) {
+function playSongFromSpecificTime(songId, songTitle,duration, startTime) {
     if (currentTimer) {
         // If a song is already playing, add this song to the queue with the specific start time
-        songQueue.push({ songId, duration, startTime });
+        songQueue.push({ songId, songTitle,duration, startTime });
     } else {
         // No song is currently playing, so start this song from the specific start time
-        startPlayingFromSpecificTime(songId, duration, startTime);
+        startPlayingFromSpecificTime(songId, songTitle, duration, startTime);
     }
 }
 
-function startPlayingFromSpecificTime(songId, duration, startTime) {
+function startPlayingFromSpecificTime(songId, songTitle, duration, startTime) {
     var currentTime = startTime || 0; // If startTime is undefined, default to 0
     var formattedDuration = formatDuration(duration);
     var formattedCurrentTime = formatDuration(currentTime);
 
-    var playbackInfo = 'ID: ' + songId + ', Duration: ' + formattedCurrentTime + '/' + formattedDuration;
+    var playbackInfo = songTitle + ', Duration: ' + formattedCurrentTime + '/' + formattedDuration;
     document.getElementById('playingSong').innerText = playbackInfo;
     document.getElementById('playbackBar').style.display = 'block';
 
@@ -433,7 +311,7 @@ function startPlayingFromSpecificTime(songId, duration, startTime) {
         currentTime++;
         var formattedCurrentTime = formatDuration(currentTime);
         document.getElementById('playingSong').innerText =
-            'ID: ' + songId + ', Duration: ' + formattedCurrentTime + '/' + formattedDuration;
+            songTitle + ', Duration: ' + formattedCurrentTime + '/' + formattedDuration;
 
         var progressPercentage = (currentTime / duration) * 100;
         progressBar.style.width = progressPercentage + '%';
@@ -445,7 +323,7 @@ function startPlayingFromSpecificTime(songId, duration, startTime) {
             playNextSong();
         }
 
-        savePlaybackState(songId, currentTime, duration);
+        savePlaybackState(songId, songTitle,currentTime, duration);
     }, 1000); // Update every second
 }
 function saveUserPreference(shouldNotMaintainQueue) {

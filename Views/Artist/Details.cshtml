@@ -5,9 +5,12 @@
 }
 
 <h2>@Model.Name</h2>
-<button id="like-artist-@Model.Id" class="like-button" onclick="likeArtist(@Model.Id)">
+
+<div class="container" id="artist-@Model.Id">
+<button class="like-button" onclick="likeItem('artist',@Model.Id)">
     <i class="@(Model.IsLiked ? "fa-solid" : "fa-regular") fa-heart"></i>
 </button>
+    </div>
 <p>Total Songs: @Model.TotalSongs</p>
 <p>Total Duration: @TimeSpan.FromSeconds(Model.TotalDuration).ToString(@"hh\:mm\:ss")</p>
 <h3>Songs:</h3>
@@ -25,7 +28,7 @@
             <tr>
                 <td>@song.Title - @song.ArtistName</td>
                 <td>
-                    <button class="play-button" onclick="playSong('@song.Id', '@song.Duration')">
+                    <button class="play-button" onclick="playSong('@song.Id', '@song.Title','@song.Duration')">
                         <i class="fa-solid fa-play"></i>
                     </button>
                 </td>

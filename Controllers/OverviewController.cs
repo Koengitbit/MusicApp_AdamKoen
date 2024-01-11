@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MusicApp_AdamKoen.DAL;
@@ -15,7 +16,7 @@ public class OverviewController : Controller
         _db = db;
     }
     [Authorize]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
         var songs = _db.Songs
             .Include(s => s.Artist)
@@ -30,9 +31,30 @@ public class OverviewController : Controller
                 ReleaseDate = s.ReleaseDate,
                 Duration = s.Duration,
                 Playlists = s.Playlists.Select(p => p.Playlist.Name).ToList()
-            })
-            .ToList();
+            }).ToList();
+        //Get logged in userId
+        var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        //Get all liked songIds
+        var likedSongIdAll = await _db.Likes
+                                .Where(l => l.UserId == currentUserId && l.SongId != null)
+                                .Select(l => l.SongId.Value)
+                                .ToListAsync();
+        // use view model to access likes
+        var songsWithLikeStatus = songs.Select(s => new SongViewModel
+        {
+            Id = s.Id,
+            Title = s.Title,
+            ArtistName = s.ArtistName,
+            Genre = s.Genre,
+            ReleaseDate = s.ReleaseDate,
+            Duration = s.Duration,
+            Playlists = s.Playlists,
+            IsLiked = likedSongIdAll.Contains(s.Id)
+        }).ToList();
 
-        return View(songs);
+        return View(songsWithLikeStatus);
     }
+    
 }
+
+

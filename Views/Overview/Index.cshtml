@@ -27,7 +27,7 @@
     <tbody>
         @foreach (var song in Model)
         {
-            <tr>
+            <tr class="song-row" id="song-@song.Id">
                 <td>@song.Id</td>
                 <td>@song.Title</td>
                 <td>@song.ArtistName</td>
@@ -48,7 +48,7 @@
                     <button class="like-button" onclick="likeItem('song', @song.Id)">
                         <i class="@(song.IsLiked ? "fa-solid" : "fa-regular") fa-heart"></i>
                     </button>
-                    <button class="play-button" onclick="playSong('@song.Id', '@song.Duration')"><i class="fa-solid fa-play"></i></button>
+                    <button class="play-button" onclick="playSong('@song.Id', '@song.Title','@song.Duration')"><i class="fa-solid fa-play"></i></button>
                 </td>
 
             </tr>

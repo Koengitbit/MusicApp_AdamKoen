@@ -17,11 +17,11 @@
 <h2>@Model.Name Playlist</h2>
 
 
-<div class="container">
+<div class="container" id="playlist-@Model.Id">
     <div class="row">
         <div class="col-1">
-<button id="playlist-@Model.Id" class="like-button" onclick="likePlaylist(@Model.Id)">
-    <i id="like-playlist-@Model.Id" class="@(Model.IsLiked ? "fa-solid" : "fa-regular") fa-heart"></i>
+            <button class="like-button" onclick="likeItem('playlist', @Model.Id)">
+    <i class="@(Model.IsLiked ? "fa-solid" : "fa-regular") fa-heart"></i>
 </button>
         </div>
         <div class="col-2">
@@ -50,7 +50,7 @@
         <div class="row">
             
     <form asp-action="AddSongToPlaylist" method="post">
-                Add Song or Playlist:
+                Add Song:
         <input type="hidden" name="playlistId" value="@Model.Id" />
                 
                 
@@ -66,18 +66,34 @@
 
     @if (Model.OtherPlaylists != null && Model.OtherPlaylists.Any())
     {
+        <div class="container">
+             <div class="row">
+                 
         <form asp-action="AddPlaylistToPlaylist" method="post">
+                    Add Playlist:
             <input type="hidden" name="targetPlaylistId" value="@Model.Id" />
             <select name="sourcePlaylistId" asp-items="@(new SelectList(Model.OtherPlaylists, "Id", "Name"))"></select>
             <button class="minus-button" type="submit"><i class="fa-solid fa-plus"></i></button>
         </form>
+            </div>
+        </div>
     }
 }
-<p>Play Playlist Buttons:</p>
-@* <button class="play-button" onclick="playSong('@song.Id', '@song.Duration')"><i class="fa-solid fa-play"></i></button> *@
-<button class="play-button" onclick="playAllSongs()"><i class="fa-solid fa-play"></i></button>
-<button class="play-button" onclick="playAllSongsShuffled()"><i class="fa-solid fa-shuffle"></i></button>
-
+<div class="container">
+    <div class="row">
+        <div class="col">
+            Play Playlist Buttons:
+        </div>
+    </div>
+    <div class="row">
+        <div class ="col-1">
+            <button class="play-button" onclick="playAllSongs()"><i class="fa-solid fa-play"></i></button>
+        </div>
+        <div class="col-1">
+        <button class="play-button" onclick="playAllSongsShuffled()"><i class="fa-solid fa-shuffle"></i></button>
+        </div>
+    </div>
+</div>
 
 
 <h3>Songs</h3>
@@ -91,7 +107,7 @@
     </tr>
     @foreach (var song in Model.Songs.OrderBy(s => s.OrderIndex))
     {
-        <tr draggable="true" class="song-row" id="song-@song.Id" data-duration="@song.Duration">
+        <tr draggable="true" class="song-row" id="song-@song.Id" title="@song.Title" data-duration="@song.Duration">
             <td>@song.OrderIndex</td>
             <td>@song.Title <br>
                 <a asp-controller="Artist" asp-action="Details" asp-route-id="@song.ArtistId">@song.ArtistName</a>
@@ -108,7 +124,7 @@
                 <button class="like-button" onclick="likeItem('song', @song.Id)">
                     <i class="@(song.IsLiked ? "fa-solid" : "fa-regular") fa-heart"></i>
                 </button>
-                <button class="play-button" onclick="playSong('@song.Id', '@song.Duration')"><i class="fa-solid fa-play"></i></button>
+                <button class="play-button" onclick="playSong('@song.Id','@song.Title', '@song.Duration')"><i class="fa-solid fa-play"></i></button>
             </td>
             <td>
                 @string.Format("{0:D2}:{1:D2}", song.Duration / 60, song.Duration % 60)

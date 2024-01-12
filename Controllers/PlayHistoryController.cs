@@ -7,7 +7,7 @@ using MusicApp_AdamKoen.ViewModels;
 using MusicApp_AdamKoen.Controllers;
 namespace MusicApp_AdamKoen.Controllers
 {
-
+    [Route("PlayHistory")]
     public class PlayHistoryController : Controller
     {
         public IActionResult Index()
@@ -16,12 +16,14 @@ namespace MusicApp_AdamKoen.Controllers
         }
         private readonly SpotifyDbContext _db;
 
+
         public PlayHistoryController(SpotifyDbContext db)
         {
             _db = db;
         }
+
         [HttpPost]
-        [Route("TrackPlay")]
+        [Route("recordPlay")]
         public async Task<IActionResult> TrackPlay([FromBody] PlayHistoryViewModel playHistoryViewModel)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);

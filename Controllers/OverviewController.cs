@@ -18,6 +18,14 @@ public class OverviewController : Controller
     [Authorize]
     public async Task<IActionResult> Index()
     {
+        //Get logged in userId
+        var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        //Get all liked songIds
+        var likedSongIdAll = await _db.Likes
+                                .Where(l => l.UserId == currentUserId && l.SongId != null)
+                                .Select(l => l.SongId.Value)
+                                .ToListAsync();
+
         var songs = _db.Songs
             .Include(s => s.Artist)
             .Include(s => s.Playlists)
@@ -30,29 +38,10 @@ public class OverviewController : Controller
                 Genre = s.Genre,
                 ReleaseDate = s.ReleaseDate,
                 Duration = s.Duration,
-                Playlists = s.Playlists.Select(p => p.Playlist.Name).ToList()
+                Playlists = s.Playlists.Select(p => p.Playlist.Name).ToList(),
+                IsLiked = likedSongIdAll.Contains(s.Id)
             }).ToList();
-        //Get logged in userId
-        var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-        //Get all liked songIds
-        var likedSongIdAll = await _db.Likes
-                                .Where(l => l.UserId == currentUserId && l.SongId != null)
-                                .Select(l => l.SongId.Value)
-                                .ToListAsync();
-        // use view model to access likes
-        var songsWithLikeStatus = songs.Select(s => new SongViewModel
-        {
-            Id = s.Id,
-            Title = s.Title,
-            ArtistName = s.ArtistName,
-            Genre = s.Genre,
-            ReleaseDate = s.ReleaseDate,
-            Duration = s.Duration,
-            Playlists = s.Playlists,
-            IsLiked = likedSongIdAll.Contains(s.Id)
-        }).ToList();
-
-        return View(songsWithLikeStatus);
+        return View(songs);
     }
     
 }

@@ -22,7 +22,8 @@ function playSong(songId, songTitle, duration) {
         startPlaying(songId, songTitle, duration);
     }
 }
-function startPlaying(songId,songTitle, duration) {
+function startPlaying(songId, songTitle, duration) {
+    recordSongPlay(songId);
     var currentTime = 0;
     var formattedDuration = formatDuration(duration);
     var playbackInfo = songTitle + ', Duration: ' + currentTime + '/' + formattedDuration;
@@ -362,3 +363,24 @@ document.addEventListener('DOMContentLoaded', function () {
         shouldNotMaintainQueueCheckbox.checked = shouldNotMaintainQueue;
     }
 });
+
+function recordSongPlay(songId) {
+    var data = { songId: songId };
+
+    // AJAX call to the server-side method
+    fetch('/PlayHistory/recordPlay', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+}
+

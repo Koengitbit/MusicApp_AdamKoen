@@ -12,8 +12,8 @@ using MusicApp_AdamKoen.DAL;
 namespace MusicAppAdamKoen.Migrations
 {
     [DbContext(typeof(SpotifyDbContext))]
-    [Migration("20240113234513_AddEnrich")]
-    partial class AddEnrich
+    [Migration("20240114191217_FinalMigration")]
+    partial class FinalMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -404,7 +404,7 @@ namespace MusicAppAdamKoen.Migrations
                             Duration = 362,
                             Genre = "Pop",
                             ReleaseDate = new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Wanna Be Startin' Somethin'"
+                            Title = "Wanna Be Starting Something"
                         },
                         new
                         {
@@ -566,7 +566,7 @@ namespace MusicAppAdamKoen.Migrations
                             Duration = 314,
                             Genre = "Hip Hop",
                             ReleaseDate = new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Tradin' War Stories"
+                            Title = "Trading War Stories"
                         });
                 });
 

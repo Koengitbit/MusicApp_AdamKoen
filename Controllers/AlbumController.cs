@@ -28,6 +28,7 @@ public class AlbumController : Controller
             {
                 Id = s.SongId,
                 Title = s.Song.Title,
+                ArtistId = s.Song.ArtistId,
                 ArtistName = s.Song.Artist.Name,
                 Genre = s.Song.Genre,
                 ReleaseDate = s.Song.ReleaseDate,
@@ -54,6 +55,7 @@ public class AlbumController : Controller
                 {
                     Id = s.Song.Id,
                     Title = s.Song.Title,
+                    ArtistId = s.Song.Artist.Id,
                     ArtistName = s.Song.Artist.Name,
                     Genre = s.Song.Genre,
                     ReleaseDate = s.Song.ReleaseDate,

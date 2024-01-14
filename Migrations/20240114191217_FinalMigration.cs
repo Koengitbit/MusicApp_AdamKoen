@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MusicAppAdamKoen.Migrations
 {
     /// <inheritdoc />
-    public partial class AddEnrich : Migration
+    public partial class FinalMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -247,7 +247,7 @@ namespace MusicAppAdamKoen.Migrations
                 columns: new[] { "Id", "ArtistId", "Duration", "Genre", "ReleaseDate", "Title" },
                 values: new object[,]
                 {
-                    { 1, 1, 362, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Wanna Be Startin' Somethin'" },
+                    { 1, 1, 362, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Wanna Be Starting Something" },
                     { 2, 2, 180, "Hip Hop", new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Changes" },
                     { 3, 1, 260, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Baby Be Mine" },
                     { 4, 1, 222, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "The Girl Is Mine" },
@@ -265,7 +265,7 @@ namespace MusicAppAdamKoen.Migrations
                     { 16, 2, 374, "Hip Hop", new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "No More Pain" },
                     { 17, 2, 283, "Hip Hop", new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Life Goes On" },
                     { 18, 2, 314, "Hip Hop", new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Only God Can Judge Me" },
-                    { 19, 2, 314, "Hip Hop", new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Tradin' War Stories" }
+                    { 19, 2, 314, "Hip Hop", new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trading War Stories" }
                 });
 
             migrationBuilder.InsertData(

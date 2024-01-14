@@ -1,5 +1,7 @@
 ﻿@model MusicApp_AdamKoen.ViewModels.LoginViewModel
-
+@{
+    ViewData["Title"] = "Login";
+}
 <h2>Login</h2>
 @if (User.Identity.IsAuthenticated)
 {

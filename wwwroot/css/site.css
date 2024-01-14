@@ -1,5 +1,6 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
+}
 }
 
 @media (min-width: 768px) {
@@ -13,12 +14,18 @@ html {
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-image: linear-gradient(to right, rgba(255, 0, 0, 0), rgba(255, 0, 0, 1));
+}
+
+.nav-links-container {
+    background-color: white;
+    border-radius: 5px; 
 }
 .song-row[data-enriched='True'] {
     background-color: #FFFF00 !important;
@@ -26,6 +33,7 @@ body {
 .table {
     width: 100%;
     border-collapse: collapse;
+    background-color: white;
 }
     .table th, .table td {
         border: 1px solid #ddd;

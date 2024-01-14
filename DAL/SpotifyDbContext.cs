@@ -77,7 +77,7 @@ public class SpotifyDbContext : DbContext
         );
 
         modelBuilder.Entity<Song>().HasData(
-            new Song { Id = 1, Title = "Wanna Be Startin' Somethin'", Genre = "Pop", ReleaseDate = new DateTime(2020, 5, 1), Duration = 362, ArtistId = 1 },
+            new Song { Id = 1, Title = "Wanna Be Starting Something", Genre = "Pop", ReleaseDate = new DateTime(2020, 5, 1), Duration = 362, ArtistId = 1 },
             new Song { Id = 2, Title = "Changes", Genre = "Hip Hop", ReleaseDate = new DateTime(2021, 6, 1), Duration = 180, ArtistId = 2 },
             new Song { Id = 3, Title = "Baby Be Mine", Genre = "Pop", ReleaseDate = new DateTime(2020, 5, 1), Duration = 260, ArtistId = 1 },
             new Song { Id = 4, Title = "The Girl Is Mine", Genre = "Pop", ReleaseDate = new DateTime(2020, 5, 1), Duration = 222, ArtistId = 1 },
@@ -95,7 +95,7 @@ public class SpotifyDbContext : DbContext
             new Song { Id = 16, Title = "No More Pain", Genre = "Hip Hop", ReleaseDate = new DateTime(1996, 1, 1), Duration = 374, ArtistId = 2 },
             new Song { Id = 17, Title = "Life Goes On", Genre = "Hip Hop", ReleaseDate = new DateTime(1996, 1, 1), Duration = 283, ArtistId = 2 },
             new Song { Id = 18, Title = "Only God Can Judge Me", Genre = "Hip Hop", ReleaseDate = new DateTime(1996, 1, 1), Duration = 314, ArtistId = 2 },
-            new Song { Id = 19, Title = "Tradin' War Stories", Genre = "Hip Hop", ReleaseDate = new DateTime(1996, 1, 1), Duration = 314, ArtistId = 2 }
+            new Song { Id = 19, Title = "Trading War Stories", Genre = "Hip Hop", ReleaseDate = new DateTime(1996, 1, 1), Duration = 314, ArtistId = 2 }
             );
         modelBuilder.Entity<Playlist>().HasData(
             new Playlist { Id = 1, Name = "Playlist 1", IsPublic = true, CreatedAt = new DateTime(2022, 1, 1), UserId = 1 },

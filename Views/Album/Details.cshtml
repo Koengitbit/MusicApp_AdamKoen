@@ -33,7 +33,7 @@
     {
         <tr draggable="true" class="song-row" id="song-@song.Id" title="@song.Title" data-duration="@song.Duration">
             <td>@song.Title</td>
-            <td>@song.ArtistName</td>
+            <td><a asp-controller="Artist" asp-action="Details" asp-route-id="@song.ArtistId">@song.ArtistName</a></td>
             <td>
                 <button class="like-button" onclick="likeItem('song', @song.Id)">
                     <i class="@(song.IsLiked ? "fa-solid" : "fa-regular") fa-heart"></i>

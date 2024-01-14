@@ -1,5 +1,7 @@
 ﻿@model List<MusicApp_AdamKoen.ViewModels.SongViewModel>
-
+@{
+    ViewData["Title"] = "Overview";
+}
 <h1>Overview</h1>
 
 <a asp-controller="Overview" asp-action="MusicLibrary">Go to Music Library</a>
@@ -18,13 +20,11 @@
 <table class="table" id="songsTable">
     <thead>
         <tr>
-            <th>Id</th>
             <th>Title</th>
             <th>Artist</th>
             <th>Genre</th>
             <th>Release Date</th>
             <th>Duration</th>
-            <th>Playlists</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -32,21 +32,12 @@
         @foreach (var song in Model)
         {
             <tr class="song-row" id="song-@song.Id">
-                <td>@song.Id</td>
                 <td>@song.Title</td>
-                <td>@song.ArtistName</td>
+                <td><a asp-controller="Artist" asp-action="Details" asp-route-id="@song.ArtistId">@song.ArtistName</a></td>
                 <td>@song.Genre</td>
                 <td>@song.ReleaseDate.ToShortDateString()</td>
                 <td>
                     @string.Format("{0:D2}:{1:D2}", song.Duration / 60, song.Duration % 60)
-                </td>
-                <td>
-                    <ul>
-                        @foreach (var playlist in song.Playlists)
-                        {
-                            <li>@playlist</li>
-                        }
-                    </ul>
                 </td>
                 <td>
                     <button class="like-button" onclick="likeItem('song', @song.Id)">

@@ -156,6 +156,8 @@ namespace MusicApp_AdamKoen.Controllers
         public async Task<IActionResult> MyPlaylists()
         {
             var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            await CreateOrUpdatePlaylistFromLikesAndHistory(currentUserId);
+
             var myPlaylists = await _db.Playlists
             .Where(p => p.UserId == currentUserId)
             .Select(p => new PlaylistViewModel
@@ -369,12 +371,9 @@ namespace MusicApp_AdamKoen.Controllers
                     return Json(new { success = false, message = "Invalid like type." });
             }
         }
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> CreatePlaylistFromLikesAndHistory()
-        {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
+        private async Task CreateOrUpdatePlaylistFromLikesAndHistory(int userId)
+        {
             // Fetch liked songs
             var likedSongIds = await _db.Likes
                                         .Where(l => l.UserId == userId && l.SongId != null)
@@ -382,73 +381,83 @@ namespace MusicApp_AdamKoen.Controllers
                                         .Distinct() // Ensure uniqueness
                                         .ToListAsync();
 
-            // Fetch songs from play history
-            var playedSongIds = await _db.PlayHistory
-                                         .Where(ph => ph.UserId == userId)
-                                         .OrderByDescending(ph => ph.PlayedAt)
-                                         .Select(ph => ph.SongId)
-                                         .Distinct() // Ensure uniqueness
-                                         .ToListAsync();
+            // Fetch the last 5 songs from play history
+            var lastPlayedSongIds = await _db.PlayHistory
+                                           .Where(ph => ph.UserId == userId)
+                                           .OrderByDescending(ph => ph.PlayedAt)
+                                           .Take(5)
+                                           .Select(ph => ph.SongId)
+                                           .ToListAsync();
 
-            // Combine liked songs and played songs
-            var combinedSongIds = likedSongIds.Union(playedSongIds).ToList();
+            // Fetch the corresponding Song entities
+            var lastPlayedSongs = await _db.Songs
+                                           .Where(s => lastPlayedSongIds.Contains(s.Id))
+                                           .ToListAsync();
 
-            if (combinedSongIds.Count == 0)
+            HashSet<int> selectedSongIds = new HashSet<int>();
+            var genreBasedSongIds = new List<int>();
+
+            // For each of the last 5 played songs, get 2 different songs of the same genre
+            foreach (var song in lastPlayedSongs)
             {
-                TempData["ErrorMessage"] = "No songs found in likes or play history to create a playlist.";
-                return RedirectToAction(nameof(Index));
-            }
- 
-            // Create a new playlist
-            var newPlaylist = new Playlist
-            {
-                Name = "My Favorites and History",
-                IsPublic = false, 
-                CreatedAt = DateTime.Now,
-                UserId = userId,
-                Songs = new List<PlaylistSong>()
-            };
-
-            // Add songs to the new playlist
-            foreach (var songId in combinedSongIds)
-            {
-                newPlaylist.Songs.Add(new PlaylistSong { SongId = songId });
-            }
-
-            _db.Playlists.Add(newPlaylist);
-            await _db.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = "Playlist created successfully from liked songs and play history.";
-            return RedirectToAction(nameof(MyPlaylists)); // Redirect to user's playlist page
-        }
-        private async Task CreateOrUpdatePlaylist(int userId)
-        {
-            // Fetch the latest playlist or create a new one
-            var playlist = await _db.Playlists
-                                    .OrderByDescending(p => p.CreatedAt)
-                                    .FirstOrDefaultAsync(p => p.UserId == userId && p.Name == "My Favorites and History");
-
-            if (playlist == null)
-            {
-                playlist = new Playlist
+                var similarSongs = await _db.Songs
+                                            .Where(s => s.Genre == song.Genre && !selectedSongIds.Contains(s.Id))
+                                            .Select(s => s.Id)
+                                            .Take(2)
+                                            .ToListAsync();
+                foreach (var id in similarSongs)
                 {
-                    Name = "My Favorites and History",
-                    IsPublic = true, 
-                    CreatedAt = DateTime.Now,
-                    UserId = userId,
-                    Songs = new List<PlaylistSong>()
-                };
-                _db.Playlists.Add(playlist);
+                    selectedSongIds.Add(id); // Add to the set to avoid reselecting the same song
+                }
+                genreBasedSongIds.AddRange(similarSongs);
             }
-            else
+            // Combine liked songs, played songs, and genre-based songs
+            var combinedSongIds = likedSongIds.Union(lastPlayedSongIds).Union(genreBasedSongIds).Distinct().ToList();
+
+            if (combinedSongIds.Any())
             {
-                playlist.CreatedAt = DateTime.Now; // Update the timestamp
-                playlist.Songs.Clear(); // Clear existing songs
+                var existingPlaylist = await _db.Playlists
+                                               .Include(p => p.Songs)
+                                               .FirstOrDefaultAsync(p => p.UserId == userId && p.Name == "My Personal Playlist");
+                if (existingPlaylist != null)
+                {
+                    // Add songs to the existing playlist, avoiding duplicates
+                    var existingSongIds = existingPlaylist.Songs.Select(s => s.SongId).ToHashSet();
+                    foreach (var songId in combinedSongIds)
+                    {
+                        if (!existingSongIds.Contains(songId))
+                        {
+                            existingPlaylist.Songs.Add(new PlaylistSong { SongId = songId });
+                        }
+                    }
+                    await _db.SaveChangesAsync();
+                
+                }
+                else
+                {
+                    // Create a new playlist
+                    var newPlaylist = new Playlist
+                    {
+                        Name = "My Personal Playlist",
+                        IsPublic = false,
+                        CreatedAt = DateTime.Now,
+                        UserId = userId,
+                        Songs = new List<PlaylistSong>()
+                    };
+
+                    // Add songs to the new playlist
+                    foreach (var songId in combinedSongIds)
+                    {
+                        newPlaylist.Songs.Add(new PlaylistSong { SongId = songId });
+                    }
+
+                    _db.Playlists.Add(newPlaylist);
+                    await _db.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Playlist created successfully from liked songs and play history.";
+               
+                }
             }
-
-            // Add liked songs and played songs logic (similar to the existing method)
-
-            await _db.SaveChangesAsync();
         }
 
         [HttpPost]

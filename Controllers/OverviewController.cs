@@ -53,6 +53,7 @@ public class OverviewController : Controller
             {
                 Id = s.Id,
                 Title = s.Title,
+                ArtistId = s.Artist.Id,
                 ArtistName = s.Artist.Name,
                 Genre = s.Genre,
                 ReleaseDate = s.ReleaseDate,
@@ -79,6 +80,7 @@ public class OverviewController : Controller
             {
                 Id = s.Id,
                 Title = s.Title,
+                ArtistId = s.Artist.Id,
                 ArtistName = s.Artist.Name,
                 Genre = s.Genre,
                 ReleaseDate = s.ReleaseDate,

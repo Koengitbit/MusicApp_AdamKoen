@@ -1,5 +1,7 @@
 ﻿@model MusicApp_AdamKoen.ViewModels.PlaylistViewModel
-
+@{
+    ViewData["Title"] = "Playlist Details";
+}
 @{
     var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
@@ -80,7 +82,7 @@
     }
 }
 <div class="container">
-    Total Songs: @Model.TotalSongs
+    Total Songs: @Model.TotalSongs,
     Total Duration: @TimeSpan.FromSeconds(Model.TotalDuration).ToString(@"hh\:mm\:ss")
 </div>
 <div class="container">

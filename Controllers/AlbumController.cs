@@ -82,38 +82,4 @@ public class AlbumController : Controller
 
         return View(album);
     }
-
-
-
-    [HttpPost]
-    public async Task<IActionResult> Like([FromBody] LikeRequest request)
-    {
-        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-
-        if (string.IsNullOrEmpty(request.Type) || request.ItemId <= 0)
-        {
-            return Json(new { success = false, message = "Invalid request." });
-        }
-
-        switch (request.Type.ToLower())
-        {
-            case "album":
-                var albumLike = await _db.Likes.FirstOrDefaultAsync(l => l.AlbumId == request.ItemId && l.UserId == userId);
-                if (albumLike == null)
-                {
-                    _db.Likes.Add(new Like { UserId = userId, AlbumId = request.ItemId });
-                    await _db.SaveChangesAsync();
-                    return Json(new { success = true, liked = true });
-                }
-                else
-                {
-                    _db.Likes.Remove(albumLike);
-                    await _db.SaveChangesAsync();
-                    return Json(new { success = true, liked = false });
-                }
-
-            default:
-                return Json(new { success = false, message = "Invalid like type." });
-        }
-    }
 }

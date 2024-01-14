@@ -47,34 +47,5 @@ namespace MusicApp_AdamKoen.Controllers
             artist.TotalDuration = artist.Songs.Sum(s => s.Duration);
             return View(artist);
         }
-        [HttpPost]
-        public async Task<IActionResult> Like([FromBody] LikeRequest request)
-        {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            if (string.IsNullOrEmpty(request.Type) || request.ItemId <= 0)
-            {
-                return Json(new { success = false, message = "Invalid request." });
-            }
-
-            if (request.Type.ToLower() == "artist")
-            {
-                var artistLike = await _db.Likes.FirstOrDefaultAsync(l => l.ArtistId == request.ItemId && l.UserId == userId);
-                if (artistLike == null)
-                {
-                    _db.Likes.Add(new Like { UserId = userId, ArtistId = request.ItemId });
-                    await _db.SaveChangesAsync();
-                    return Json(new { success = true, liked = true, message = "Artist liked successfully." });
-                }
-                else
-                {
-                    _db.Likes.Remove(artistLike);
-                    await _db.SaveChangesAsync();
-                    return Json(new { success = true, liked = false, message = "Artist unliked successfully." });
-                }
-            }
-
-            return Json(new { success = false, message = "Invalid like type." });
-        }
-
     }
 }

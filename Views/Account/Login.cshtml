@@ -3,6 +3,7 @@
     ViewData["Title"] = "Login";
 }
 <h2>Login</h2>
+<div class="form-background">
 @if (User.Identity.IsAuthenticated)
 {
     <p>You are already logged in.</p>
@@ -29,3 +30,4 @@ else
     <button type="submit" class="btn btn-primary">Login</button>
 </form>
 }
+</div>

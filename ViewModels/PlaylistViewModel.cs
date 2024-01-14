@@ -14,12 +14,9 @@ namespace MusicApp_AdamKoen.ViewModels
         public int UserId { get; set; }
         public List<SongViewModel>? Songs { get; set; }
         public int? SelectedSongId { get; set; }
-        // 0 references on songtoremoveid might remove soon
-        public int? SongToRemoveId { get; set; }
-        public Dictionary<int, bool>? LikedSongs { get; set; }
         public int TotalSongs { get; set; }
         public int TotalDuration { get; set; }
+        public bool IsEnriched { get; set; }
         public List<PlaylistViewModel>? OtherPlaylists { get; set; }
-
     }
 }

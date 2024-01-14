@@ -12,8 +12,8 @@ using MusicApp_AdamKoen.DAL;
 namespace MusicAppAdamKoen.Migrations
 {
     [DbContext(typeof(SpotifyDbContext))]
-    [Migration("20240109091529_SeedDatabase")]
-    partial class SeedDatabase
+    [Migration("20240113234513_AddEnrich")]
+    partial class AddEnrich
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -336,6 +336,9 @@ namespace MusicAppAdamKoen.Migrations
                     b.Property<int>("SongId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsEnriched")
+                        .HasColumnType("bit");
+
                     b.Property<int>("OrderIndex")
                         .HasColumnType("int");
 
@@ -350,12 +353,14 @@ namespace MusicAppAdamKoen.Migrations
                         {
                             PlaylistId = 1,
                             SongId = 1,
+                            IsEnriched = false,
                             OrderIndex = 2
                         },
                         new
                         {
                             PlaylistId = 1,
                             SongId = 2,
+                            IsEnriched = false,
                             OrderIndex = 1
                         });
                 });

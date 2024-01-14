@@ -20,6 +20,9 @@ html {
 body {
   margin-bottom: 60px;
 }
+.song-row[data-enriched='True'] {
+    background-color: #FFFF00 !important;
+}
 .table {
     width: 100%;
     border-collapse: collapse;
@@ -105,5 +108,3 @@ body {
     align-items: center;
     justify-content: center;
 }
-
-

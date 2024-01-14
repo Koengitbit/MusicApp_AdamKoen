@@ -80,6 +80,10 @@
     }
 }
 <div class="container">
+    Total Songs: @Model.TotalSongs
+    Total Duration: @TimeSpan.FromSeconds(Model.TotalDuration).ToString(@"hh\:mm\:ss")
+</div>
+<div class="container">
     <div class="row">
         <div class="col">
             Play Playlist Buttons:
@@ -91,6 +95,13 @@
         </div>
         <div class="col-1">
         <button class="play-button" onclick="playAllSongsShuffled()"><i class="fa-solid fa-shuffle"></i></button>
+        </div>
+        <div class="col-2">
+            @using (Html.BeginForm("Enrich", "Playlist", FormMethod.Post))
+        {
+            <input type="hidden" name="playlistId" value="@Model.Id" />
+            <button type="submit" class="btn btn-primary">Enrich Playlist</button>
+        }
         </div>
     </div>
 </div>
@@ -107,7 +118,8 @@
     </tr>
     @foreach (var song in Model.Songs.OrderBy(s => s.OrderIndex))
     {
-        <tr draggable="true" class="song-row" id="song-@song.Id" title="@song.Title" data-duration="@song.Duration">
+
+        <tr draggable="true" class="song-row" @* style="@(song.IsEnriched ? "background-color: #FFFF00;" : "")" *@ id="song-@song.Id" title="@song.Title" data-duration="@song.Duration" data-enriched="@song.IsEnriched">
             <td>@song.OrderIndex</td>
             <td>@song.Title <br>
                 <a asp-controller="Artist" asp-action="Details" asp-route-id="@song.ArtistId">@song.ArtistName</a>

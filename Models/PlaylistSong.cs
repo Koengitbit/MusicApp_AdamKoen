@@ -7,4 +7,5 @@ public class PlaylistSong
     public int SongId { get; set; }
     public Song Song { get; set; }
     public int OrderIndex { get; set; }
+    public bool IsEnriched { get; set; }
 }

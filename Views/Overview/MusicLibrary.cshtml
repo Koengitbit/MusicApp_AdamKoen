@@ -1,19 +1,24 @@
 ﻿@model List<MusicApp_AdamKoen.ViewModels.SongViewModel>
 
-<h1>Overview</h1>
+<h1>Music Library</h1>
 
-<a asp-controller="Overview" asp-action="MusicLibrary">Go to Music Library</a>
-
-<form asp-controller="Overview" asp-action="Index" method="get">
-    <input type="text" name="SearchString" placeholder="Search songs..." value="@ViewData["searchString"]" />
-    <button type="submit">Search</button>
-</form>
+<a asp-controller="Overview" asp-action="Index">Go back to overview</a>
 <div id="playbackBar">
     <div class="playback-info">
         Now Playing: <span id="playingSong"></span>
         <button onclick="skipSong()">Skip</button>
     </div>
     <div class="progress-bar" id="progressBar"></div>
+</div>
+<div class="container">
+<div class="row">
+    <div class="col-1">
+        <button class="play-button" onclick="playAllSongs()"><i class="fa-solid fa-play"></i></button>
+    </div>
+    <div class="col-1">
+        <button class="play-button" onclick="playAllSongsShuffled()"><i class="fa-solid fa-shuffle"></i></button>
+    </div>
+</div>
 </div>
 <table class="table" id="songsTable">
     <thead>
@@ -31,7 +36,7 @@
     <tbody>
         @foreach (var song in Model)
         {
-            <tr class="song-row" id="song-@song.Id">
+            <tr draggable="true" class="song-row" id="song-@song.Id" title="@song.Title" data-duration="@song.Duration">
                 <td>@song.Id</td>
                 <td>@song.Title</td>
                 <td>@song.ArtistName</td>

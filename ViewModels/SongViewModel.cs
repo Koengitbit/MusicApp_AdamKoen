@@ -11,5 +11,6 @@ public class SongViewModel
     public int Duration { get; set; }
     public bool IsLiked { get; set; }
     public List<string> Playlists { get; set; }
+    public bool IsEnriched { get; set; }
     public int OrderIndex { get; set; }
 }

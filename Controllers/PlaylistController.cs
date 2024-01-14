@@ -117,7 +117,8 @@ namespace MusicApp_AdamKoen.Controllers
                         ReleaseDate = ps.Song.ReleaseDate,
                         Duration = ps.Song.Duration,
                         Playlists = ps.Song.Playlists.Select(pl => pl.Playlist.Name).ToList(),
-                        OrderIndex = ps.OrderIndex
+                        OrderIndex = ps.OrderIndex,
+                        IsEnriched = ps.IsEnriched
                     }).OrderBy(s => s.OrderIndex).ToList(),
                     TotalSongs = p.Songs.Count,
                     TotalDuration = p.Songs.Sum(ps => ps.Song.Duration)
@@ -173,7 +174,8 @@ namespace MusicApp_AdamKoen.Controllers
                     ReleaseDate = ps.Song.ReleaseDate,
                     Duration = ps.Song.Duration,
                     Playlists = ps.Song.Playlists.Select(pl => pl.Playlist.Name).ToList(),
-                    OrderIndex = ps.OrderIndex
+                    OrderIndex = ps.OrderIndex,
+                    IsEnriched = ps.IsEnriched
                 }).OrderBy(s => s.OrderIndex).ToList()
             }).ToListAsync();
 
@@ -396,7 +398,7 @@ namespace MusicApp_AdamKoen.Controllers
                 TempData["ErrorMessage"] = "No songs found in likes or play history to create a playlist.";
                 return RedirectToAction(nameof(Index));
             }
-
+ 
             // Create a new playlist
             var newPlaylist = new Playlist
             {
@@ -448,6 +450,45 @@ namespace MusicApp_AdamKoen.Controllers
 
             await _db.SaveChangesAsync();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Enrich(int playlistId)
+        {
+            var playlist = await _db.Playlists.Include(p => p.Songs)
+                                              .ThenInclude(ps => ps.Song)
+                                              .FirstOrDefaultAsync(p => p.Id == playlistId);
+
+            if (playlist == null)
+            {
+                return NotFound();
+            }
+
+            var songIdsInPlaylist = playlist.Songs.Select(ps => ps.SongId).ToList();
+
+            var mostCommonGenre = playlist.Songs
+                                          .GroupBy(s => s.Song.Genre)
+                                          .OrderByDescending(g => g.Count())
+                                          .Select(g => g.Key)
+                                          .FirstOrDefault();
+
+            if (!string.IsNullOrEmpty(mostCommonGenre))
+            {
+                var songsToAdd = await _db.Songs.Where(s => s.Genre == mostCommonGenre && !songIdsInPlaylist.Contains(s.Id))
+                                                .Take(2)
+                                                .ToListAsync();
+
+                foreach (var song in songsToAdd)
+                {
+                    playlist.Songs.Add(new PlaylistSong { PlaylistId = playlistId, SongId = song.Id, IsEnriched = true });
+                }
+
+                await _db.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Details", new { id = playlistId });
+        }
+
+
 
 
 

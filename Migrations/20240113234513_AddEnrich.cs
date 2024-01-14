@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MusicAppAdamKoen.Migrations
 {
     /// <inheritdoc />
-    public partial class AddPlayHistory : Migration
+    public partial class AddEnrich : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -190,7 +190,8 @@ namespace MusicAppAdamKoen.Migrations
                 {
                     PlaylistId = table.Column<int>(type: "int", nullable: false),
                     SongId = table.Column<int>(type: "int", nullable: false),
-                    OrderIndex = table.Column<int>(type: "int", nullable: false)
+                    OrderIndex = table.Column<int>(type: "int", nullable: false),
+                    IsEnriched = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -237,8 +238,8 @@ namespace MusicAppAdamKoen.Migrations
                 columns: new[] { "Id", "CreatedAt", "IsPublic", "Name", "UserId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, "Playlist One", 1 },
-                    { 2, new DateTime(2022, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, "Playlist Two", 1 }
+                    { 1, new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, "Playlist 1", 1 },
+                    { 2, new DateTime(2022, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, "Playlist 2", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -254,7 +255,17 @@ namespace MusicAppAdamKoen.Migrations
                     { 6, 1, 210, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Beat it" },
                     { 7, 1, 210, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Billie Jean" },
                     { 8, 1, 210, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Human Nature" },
-                    { 9, 1, 210, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "P.Y.T (Pretty Young Thing)" }
+                    { 9, 1, 210, "Pop", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "P.Y.T (Pretty Young Thing)" },
+                    { 10, 2, 278, "Hip Hop", new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Ambitionz Az A Ridah" },
+                    { 11, 2, 276, "Hip Hop", new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "All About U" },
+                    { 12, 2, 248, "Hip Hop", new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Skandalouz" },
+                    { 13, 2, 312, "Hip Hop", new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Got My Mind Made Up" },
+                    { 14, 2, 285, "Hip Hop", new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "How Do U Want It" },
+                    { 15, 2, 246, "Hip Hop", new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "2 Of Amerikaz Most Wanted" },
+                    { 16, 2, 374, "Hip Hop", new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "No More Pain" },
+                    { 17, 2, 283, "Hip Hop", new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Life Goes On" },
+                    { 18, 2, 314, "Hip Hop", new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Only God Can Judge Me" },
+                    { 19, 2, 314, "Hip Hop", new DateTime(1996, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Tradin' War Stories" }
                 });
 
             migrationBuilder.InsertData(
@@ -269,16 +280,27 @@ namespace MusicAppAdamKoen.Migrations
                     { 1, 6, 4 },
                     { 1, 7, 5 },
                     { 1, 8, 6 },
-                    { 1, 9, 7 }
+                    { 1, 9, 7 },
+                    { 2, 2, 10 },
+                    { 2, 10, 0 },
+                    { 2, 11, 1 },
+                    { 2, 12, 2 },
+                    { 2, 13, 3 },
+                    { 2, 14, 4 },
+                    { 2, 15, 5 },
+                    { 2, 16, 6 },
+                    { 2, 17, 7 },
+                    { 2, 18, 8 },
+                    { 2, 19, 9 }
                 });
 
             migrationBuilder.InsertData(
                 table: "PlaylistSongs",
-                columns: new[] { "PlaylistId", "SongId", "OrderIndex" },
+                columns: new[] { "PlaylistId", "SongId", "IsEnriched", "OrderIndex" },
                 values: new object[,]
                 {
-                    { 1, 1, 2 },
-                    { 1, 2, 1 }
+                    { 1, 1, false, 2 },
+                    { 1, 2, false, 1 }
                 });
 
             migrationBuilder.CreateIndex(

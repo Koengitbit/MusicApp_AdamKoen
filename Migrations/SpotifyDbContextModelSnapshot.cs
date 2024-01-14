@@ -333,6 +333,9 @@ namespace MusicAppAdamKoen.Migrations
                     b.Property<int>("SongId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsEnriched")
+                        .HasColumnType("bit");
+
                     b.Property<int>("OrderIndex")
                         .HasColumnType("int");
 
@@ -347,12 +350,14 @@ namespace MusicAppAdamKoen.Migrations
                         {
                             PlaylistId = 1,
                             SongId = 1,
+                            IsEnriched = false,
                             OrderIndex = 2
                         },
                         new
                         {
                             PlaylistId = 1,
                             SongId = 2,
+                            IsEnriched = false,
                             OrderIndex = 1
                         });
                 });
